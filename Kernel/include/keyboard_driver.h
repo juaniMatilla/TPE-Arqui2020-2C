@@ -3,11 +3,7 @@
 
 #include <stdint.h>
 
-int getScanCode();
-int isLetter(char c);
-void onKeyPressed(char chr);
-
-char getKey();
+char getKeyPressed();
 
 
 

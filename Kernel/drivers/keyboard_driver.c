@@ -1,8 +1,6 @@
 #include <stdint.h>
 #include <lib.h>
 #include <keyboard_driver.h>
-
-
 //scancodes de teclas especiales
 #define CONTROL_PRESSED 29
 #define CONTROL_RELEASED 157
@@ -16,19 +14,11 @@
 #define ESC_ASCII 27
 #define CAPTURE_FLAGS 2
 #define ALT_SCAN_CODE 0xb8
-//entre codes de pressed y released hay un defasaje de 128
-#define INPUT_BUFFER 255 //Cant max de caracteres en buffer de input
-
-static char keyboardBuffer[INPUT_BUFFER];
-static unsigned int bufferSize = 0;
-
 //estado de teclas especiales
 static int pressingShift =0;
-static int bloqMayus = 0; //boolean
-
+static int bloqMayus = 0;
 static int pressingCtrl =0;
 
-//matriz obtenida de http://www.cs.umd.edu/~hollings/cs412/s98/project/proj1/scancode 
 static char asccode[58][2] ={
     { 0, 0 }, { 0, 0 }, { '1','!' }, { '2','@' },
     { '3','#' }, { '4','$' }, { '5','%' }, { '6','^' },
@@ -48,10 +38,6 @@ static char asccode[58][2] ={
 };
 
 
-//private
-int codeMatchesAscii(int scancode);
-char getMatchingAscii(int scancode);
-
 int codeMatchesAscii(int scancode){
   return scancode>=0 && scancode<58 && asccode[scancode][1] !=0;
 }
@@ -68,7 +54,6 @@ int getScanCode(){
     pressingShift=0;
   else if(code == BLOQMAYUS)
     bloqMayus = !bloqMayus;
-
   return code;
 }
 
@@ -88,41 +73,16 @@ char getMatchingAscii(int scancode){
   return -1;
 }
 
-void onKeyPressed(char chr) {
-  if(bufferSize < INPUT_BUFFER)
-    keyboardBuffer[bufferSize++] = chr;
-}
-// unsigned int readStandardInput(char * buffer,int dim) {
-//   while(bufferSize == 0)
-//     _hlt();
-  
-//   unsigned int i;
-//   for(i = 0; i < dim && i < bufferSize; i++)
-//     buffer[i] = keyboardBuffer[i];
-//   //Ahora muevo el buffer a la izquierda "i" veces
-//   if(i > 0)
-//     for(int j = 0; j < bufferSize-i; j++)
-//       keyboardBuffer[j] = keyboardBuffer[j+i];
-//   bufferSize -= i;
-//   return i;
-  
-// }
-
-void keyboard_handler(uint64_t rsp){
-    
+char getKeyPressed(){
     int scanCode = getScanCode();
     char c;
-
     if(scanCode == ESC_SCANCODE) {
       c = ESC_ASCII;
     } else if(scanCode == ALT_SCAN_CODE) {
       c = CAPTURE_FLAGS;
-    }
-    else if(codeMatchesAscii(scanCode) && !pressingCtrl)
-    {
-        c = getMatchingAscii(scanCode);
+    } else if(codeMatchesAscii(scanCode) && !pressingCtrl){
+      return getMatchingAscii(scanCode);
     } else {
-      return;
+      return -1;
     }
-    onKeyPressed(c);
 }

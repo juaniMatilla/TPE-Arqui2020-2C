@@ -122,9 +122,8 @@ int main()
 
 	//userProgram();
 
-
-	while(1){
-	}
+	ncClear();
+	
 	
 	return 0;
 }
