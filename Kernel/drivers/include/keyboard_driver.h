@@ -4,11 +4,7 @@
 #include <stdint.h>
 #include <lib.h>
 
-int getScanCode();
-int isLetter(char c);
-void onKeyPressed(char chr);
-
-char getKey();
+char getKeyPressed();
 
 
 
