@@ -2,6 +2,7 @@
 #define KEYBOARD_DRIVER_H
 
 #include <stdint.h>
+#include <lib.h>
 
 int getScanCode();
 int isLetter(char c);

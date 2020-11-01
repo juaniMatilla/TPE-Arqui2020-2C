@@ -6,9 +6,11 @@
 
 #include <text_driver.h>
 #include <timerRTC.h>
+#include "video_vm.h"
+#include "idt.h"
 
 //user function
-#include "libUser.h"
+//#include "libUser.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -90,7 +92,8 @@ int main()
 {	
 
 	load_idt();
-
+	init_VM_Driver();
+	
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -110,7 +113,6 @@ int main()
 
 	ncPrint("[Finished]");
 	//ncClear();
-
 	/*
 	char * seconds = getDataTime();
 	//ncPrint(seconds);
@@ -122,9 +124,21 @@ int main()
 
 	//userProgram();
 
+	/*drawRectangle(50, 85, 80, 40, 16763708);
 
-	while(1){
-	}
+	const char* String = "hola como  holaaa ";
+	
+	drawString(100, 100,String, 2, 16777215, 0 );
+	
+	for (int i = 0; i < 100000000; i++);
+
+	scrollUp(50, 0);
+	
+	drawString(100, 100,String, 2, 16777215, 7215 );
+
+	for (int i = 0; i < 100000000; i++);
+	
+	clearDisplay(0);*/
 	
 	return 0;
 }

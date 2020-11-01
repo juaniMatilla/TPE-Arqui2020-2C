@@ -1,6 +1,6 @@
 
 #include "idt.h"
-#include <stdarg.h> //permite arumentos variables
+//#include <stdarg.h> //permite arumentos variables
 
 #pragma pack(push)		/* Push de la alineación actual */
 #pragma pack (1) 		/* Alinear las siguiente estructuras a 1 byte */
@@ -89,19 +89,15 @@ void irqDispatcher(uint64_t irq) {
 	return;
 }
 
-void int80Handler(uint64_t num, ...) {
-    va_list ap;
-    va_start(ap, num);
-
+void int80Handler(int num, uint64_t *RSP ) {
+    // RSP apunta al rax de la pila pusheado
+    //RSP[8*5]-> rdi, RSP[8*6]-> rsi, RSP[8*3]-> rdx, 
+    //RSP[8*9]-> r10, RSP[8*7]-> r8, RSP[8*8]-> r9, 
     switch (num) {
         case 1:
-            print(va_arg(ap, int));
-            print("   ");
-
+            Write(RSP[8*5]);
             break;
         case 2: 
-            redPrint(va_arg(ap, int));
-            print("   ");
             break;
 	}
 	return;

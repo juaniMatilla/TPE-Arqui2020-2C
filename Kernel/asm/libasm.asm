@@ -28,7 +28,7 @@
 section .text
 
 %macro pushState 0
-	push rax
+	;push rax
 	push rbx
 	push rcx
 	push rdx
@@ -60,7 +60,7 @@ section .text
 	pop rdx
 	pop rcx
 	pop rbx
-	pop rax
+	;pop rax
 %endmacro
 
 ;recibe un 1byte donde cada uno de sus 8 bit representa una entrada del pic
@@ -170,18 +170,21 @@ kbFlag:
     pop rbp
     ret
 
+
+;System call
 _irq80Handler:
 	pushState
-	
-	mov rdi, rax
-	mov rsi, rdx
+	mov rdi, rax 
+	mov rsi, 14*8 ;que apunte al primer argumento
 	call int80Handler
 	
 	popState
 	iretq
 
 
+; IRQ Interruptions
 %macro irqHandlerMaster 1
+	
 	pushState
 
 	mov rdi, %1 ; pasaje de parametro
@@ -218,15 +221,8 @@ _irq01Handler:
 _irq08Handler:
 	irqHandlerMaster 8
 
-;Serial Port 1 and 3
-_irq04Handler:
-	irqHandlerMaster 4
 
-;USB
-_irq05Handler:
-	irqHandlerMaster 5
-
-
+; Exceptions
 %macro exHandlerMaster 1
 	pushState
 
@@ -247,5 +243,9 @@ _irq05Handler:
 ;DivByZero
 _ex00Handler:
 	exHandlerMaster 0
+
+;invalid opcode
+_ex01Handler:
+	exHandlerMaster 1
 
 

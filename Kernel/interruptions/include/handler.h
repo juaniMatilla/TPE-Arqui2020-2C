@@ -4,11 +4,11 @@
 #include <stdint.h>
 #include <naiveConsole.h>
 #include "text_driver.h"
+#include "video_vm.h"
 
 //preTP
 void testerTick();
 void testerkeyboard();
-void print(const char* buff);
-void redPrint(const char* buff);
+void Write(const char* String);
 
 #endif

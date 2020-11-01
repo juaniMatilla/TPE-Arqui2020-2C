@@ -12,14 +12,10 @@ void testerkeyboard(){
     return;
 }
 
-void redPrint(const char* buff){
-    textPrint(buff, 15, 0);
-    return;
+void Write(const char* String){
+    drawString(0, 0, String, 1, 16777215, 0);
 }
 
-void print(const char* buff){
-    textPrint(buff, 4, 0);
-    return;
-}
+
 
 
