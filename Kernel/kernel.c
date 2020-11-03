@@ -9,9 +9,6 @@
 #include "video_vm.h"
 #include "idt.h"
 
-//user function
-//#include "libUser.h"
-
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -93,7 +90,9 @@ int main()
 
 	load_idt();
 	init_VM_Driver();
+
 	
+
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -112,7 +111,7 @@ int main()
 	ncNewline();
 
 	ncPrint("[Finished]");
-	//ncClear();
+	
 	/*
 	char * seconds = getDataTime();
 	//ncPrint(seconds);
@@ -135,10 +134,8 @@ int main()
 	scrollUp(50, 0);
 	
 	drawString(100, 100,String, 2, 16777215, 7215 );
-
-	for (int i = 0; i < 100000000; i++);
 	
-	clearDisplay(0);*/
+	//clearDisplay(0);*/
 	
 	return 0;
 }

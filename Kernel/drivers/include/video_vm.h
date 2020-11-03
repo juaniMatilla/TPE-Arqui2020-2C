@@ -4,15 +4,20 @@
 #include <stdint.h>
 #include "font.h"
 
+//funciones manejo de pantalla
 void init_VM_Driver();
+void scrollUp(int cant, unsigned int backgroundColor);
+void clearDisplay(unsigned int backgroundColor);
+
 void drawPixel(unsigned int x, unsigned int y, int color);
 void drawRectangle(unsigned int x, unsigned int y, int b, int h, int color);
 void drawSquare(unsigned int x, unsigned int y, int l, int color);
-void scrollUp(int cant, unsigned int backgroundColor);
-
 int drawChar(int x, int y, char character, int fontSize, int fontColor, int backgroundColor);
+int drawString(int x, int y, const char* String, int fontSize, int fontColor, int backgroundColor);
+void drawMatriz(int x, int y, const char* matriz, int dimx, int dimy, int fontSize, int fontColor, int backgroundColor);
 
-void drawString(int x, int y, const char* String, int fontSize, int fontColor, int backgroundColor);
+void writeString(const char* String);
+void writeChar(char String);
 
 #endif
 

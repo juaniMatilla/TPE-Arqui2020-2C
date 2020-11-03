@@ -1,31 +1,29 @@
 include ../Makefile.inc
 
 MODULE=0000-sampleCodeModule.bin
-SOURCES=$(wildcard [^_]*.c)
+SOURCES=$(wildcard *.c)
 SOURCES_ASM=$(wildcard library/*.asm)
 SOURCES_LIBRARY=$(wildcard library/*.c)
-SOURCES_USER=$(wildcard userProgram/*.C)
+SOURCES_USER=$(wildcard userProgram/*.c)
 
 OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
-OBJECTS_LIBRARY=$(SOURCES_LIBRARY:.asm=.o)
-OBJECTS_USER=$(SOURCES_USER:.asm=.o)
+OBJECTS_LIBRARY=$(SOURCES_LIBRARY:.c=.o)
+OBJECTS_USER=$(SOURCES_USER:.c=.o)
 
 all: $(MODULE)
 
-
 $(MODULE): $(SOURCES) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_LIBRARY) $(OBJECTS_USER)
-	$(LD) -T sampleCodeModule.ld _loader.o $(OBJECTS)  $(OBJECTS_ASM) $(OBJECTS_LIBRARY) $(OBJECTS_USER) -o ../$(MODULE)
+	$(LD) -T sampleCodeModule.ld  $(OBJECTS)  $(OBJECTS_ASM) $(OBJECTS_LIBRARY) $(OBJECTS_USER) -o ../$(MODULE)
 
-
-%.o:%.c
-	$(GCC) $(GCCFLAGS) -I./include -c _loader.c  $(SOURCES)
+%.o: %.c
+	$(GCC) $(GCCFLAGS) -I./include -c $<  -o $@
 
 %.o:%.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
 clean:
-	rm -rf *.o asm/*.o
+	rm -rf *.o library/*.o  userProgram/*.o
 
 .PHONY: all clean print
 

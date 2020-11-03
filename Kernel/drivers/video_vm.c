@@ -11,6 +11,13 @@ unsigned int SCREEN_WIDTH = 1024;
 unsigned int SCREEN_HEIGHT = 768;
 unsigned int SCREEN_BPP= 3;  //los bytes por cada pixel
 
+//color 0 -> negro, 16777215 -> blanco
+int currentX;
+int currentY;
+int defaultFontColor = 16777215; //blanco
+int defaultBackgroundColor = 0; //negro
+int defaultFontSize = 1;
+
 //contiene todos los datos de la pantalla
 struct vbe_mode_info_structure{
     uint16_t attributes;    // deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
@@ -56,6 +63,8 @@ void init_VM_Driver(){
     SCREEN_WIDTH = screenData->width;
     SCREEN_HEIGHT = screenData->height;
     SCREEN_BPP = screenData->bpp / 8;
+    currentX = 0;
+    currentY = 0;
 }
 
 void drawPixel(unsigned int x, unsigned int y, int color){
@@ -89,9 +98,12 @@ void scrollUp(int cant, unsigned int backgroundColor){
     for (int  i = SCREEN_HEIGHT - cant; i < SCREEN_HEIGHT ; i++)
         for (int  j = 0; j < SCREEN_WIDTH*SCREEN_BPP; j++)
             drawPixel(j,i,backgroundColor);
+
+    //currentX = 0;
+    currentY -= (CHAR_HEIGHT*defaultFontSize);
 }
 
-//devulve el ancho del caracter
+//devulve el ancho del caracter que se imprimio
 int drawChar(int x, int y, char character, int fontSize, int fontColor, int backgroundColor){
     int aux_x = x;
     int aux_y = y;
@@ -115,12 +127,40 @@ int drawChar(int x, int y, char character, int fontSize, int fontColor, int back
     return fontSize*CHAR_WIDTH;
 }
 
-void drawString(int x, int y, const char* String, int fontSize, int fontColor, int backgroundColor){
+/*
+int drawString(int x, int y, const char* String, int fontSize, int fontColor, int backgroundColor){
     int aux = 0;
-    for (int i = 0; String[i] != 0 ; i++)	{
-		drawChar(x+aux, y, String[i], fontSize, fontColor, backgroundColor);
+    int i;
+    for (i = 0; String[i] != 0 ; i++)	{
+        drawChar(x+aux, y, String[i], fontSize, fontColor, backgroundColor);
 		aux += (CHAR_WIDTH*fontSize);
-	}	
+	}
+    return aux;	
+}*/
+
+void writeString(const char* String){
+
+    for (int i = 0; String[i] != 0 ; i++)	{
+        if(currentX+(CHAR_WIDTH*defaultFontSize) > SCREEN_WIDTH){
+            currentX = 0;
+            currentY += (CHAR_HEIGHT*defaultFontSize);
+        }
+        currentX += drawChar(currentX, currentY, String[i], defaultFontSize, defaultFontColor, defaultBackgroundColor);
+	}
+    return;
+}
+
+void writeChar(char character){
+    if(currentX+(CHAR_WIDTH*defaultFontSize) > SCREEN_WIDTH){
+        currentX = 0;
+        currentY += (CHAR_HEIGHT*defaultFontSize);
+    }
+    currentX += drawChar(currentX, currentY, character, defaultFontSize, defaultFontColor, defaultBackgroundColor);
+}
+
+void newLine(){
+    currentX = 0;
+    currentY += (CHAR_HEIGHT*defaultFontSize);
 }
 
 void clearDisplay(unsigned int backgroundColor){
@@ -130,11 +170,12 @@ void clearDisplay(unsigned int backgroundColor){
         pos[i + 1] = (backgroundColor >> 8) & 255; // verde
         pos[i + 2] = (backgroundColor >> 16) & 255; // rojo
     }
+    currentX = 0;
+    currentY = 0;
 }
 
 //usar el mismo sistema que font
 void drawMatriz(int x, int y, const char* matriz, int dimx, int dimy, int fontSize, int fontColor, int backgroundColor){
-    
     int aux_x = x;
     int aux_y = y;
     char bitIsPresent;

@@ -4,14 +4,20 @@
 ;el numero de systemcall se pasa por rax
 
 
-GLOBLA writeString
-
+GLOBAL SystemCall00
+GLOBAL SystemCall01
 
 section .text
-writeString:
+SystemCall00:
+    mov rax, 0
+    int 80h
+    ret 
+
+SystemCall01:
     mov rax, 1
     int 80h
     ret 
+
 
     
 

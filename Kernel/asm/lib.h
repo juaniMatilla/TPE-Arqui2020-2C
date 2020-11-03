@@ -14,6 +14,7 @@ void _cli();
 void _picMasterMask(uint8_t mask);
 void _picSlaveMask(uint8_t mask);
 unsigned char _readKey();
+int kbFlag();
 
 
 void _ex00Handler(); //DivByZero

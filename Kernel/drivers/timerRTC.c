@@ -28,6 +28,7 @@ int getYear() {
   return getTimeInfo(9);
 }
 
+//cambiar que reciba un buff, que no use una variable local
 char* getDataTime() {
 	int seconds = getSeconds();
 	int minutes = getMinutes();

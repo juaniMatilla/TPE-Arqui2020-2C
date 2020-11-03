@@ -75,11 +75,11 @@ void exDispatcher(uint64_t ex){
 //cambiar el switch por un vector de punteros a funcion
 void irqDispatcher(uint64_t irq) {
 	switch (irq) {
-		case 0: //Timer_Tick
+		case 0: 
             //testerTick();
 			break;
         case 1: // Keyboard
-            testerkeyboard();
+            //testerkeyboard();
             //kb_fetch();
             break;
         case 8: //RTC int
@@ -89,19 +89,53 @@ void irqDispatcher(uint64_t irq) {
 	return;
 }
 
-void int80Handler(int num, uint64_t *RSP ) {
-    // RSP apunta al rax de la pila pusheado
-    //RSP[8*5]-> rdi, RSP[8*6]-> rsi, RSP[8*3]-> rdx, 
-    //RSP[8*9]-> r10, RSP[8*7]-> r8, RSP[8*8]-> r9, 
+void int80Handler(uint64_t num, uint64_t *RSP) {
+   //se cuenta desde el r15 como 0 hasta rax en el orde de popState 
+   // rdi -> RSP[9], rsi -> RSP[8]
     switch (num) {
+        case 0:
+            writeString(RSP[9]);
+            break;
         case 1:
-            Write(RSP[8*5]);
+            writeChar(RSP[9]);
             break;
         case 2: 
             break;
+        case 3:
+        
+            break;
+        case 4:
+            // lee del teclado
+ 
+            break;
 	}
+  
 	return;
 }
+/*
+void int80Handler(uint64_t num, ...) {
+    va_list ap;
+    va_start(ap, num);
+    switch (num) {
+        case 0:
+            writeString(va_arg(ap, int));
+            break;
+        case 1:
+            writeChar(va_arg(ap, int));
+            break;
+        case 2: 
+            break;
+        case 3:
+        
+            break;
+        case 4:
+            // lee del teclado
+ 
+            break;
+	}
+    va_end(ap);
+	return;
+}*/
 
 
 static void setup_IDT_entry (int index, uint64_t offset) {

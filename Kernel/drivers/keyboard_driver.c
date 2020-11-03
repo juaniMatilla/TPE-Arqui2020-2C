@@ -73,6 +73,7 @@ char getMatchingAscii(int scancode){
   return -1;
 }
 
+//no se usa la variable c
 char getKeyPressed(){
     int scanCode = getScanCode();
     char c;
@@ -85,4 +86,6 @@ char getKeyPressed(){
     } else {
       return -1;
     }
+
+    //aca no devuelve nada
 }

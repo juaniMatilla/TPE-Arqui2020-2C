@@ -1,5 +1,5 @@
 #include <handler.h>
-
+/*
 void testerTick(){
     ncNewline();
     ncPrint("hola");
@@ -16,6 +16,6 @@ void Write(const char* String){
     drawString(0, 0, String, 1, 16777215, 0);
 }
 
-
+*/
 
 
