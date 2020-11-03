@@ -11,4 +11,6 @@ void putStirng(char *String); //imprime un string
 void putchar(char c); //imprime un caeacter
 void putInt(int num);
 
+char getchar();
+
 #endif

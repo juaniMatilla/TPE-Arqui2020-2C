@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdc.h>
 
 //PIECES
 #define KING 1
@@ -18,7 +19,7 @@
 #define PLAYER2 2
 
 #define MAXPLAYS 99
-
+/*
 struct piece {
     int x;
     int y;
@@ -36,7 +37,7 @@ struct log logs2[MAXPLAYS] = {0};
 
 
 
-int validKnightMov(int fromX, int fromY, int toX, int toY);
+//int validKnightMov(int fromX, int fromY, int toX, int toY);
 int validPawnMov(struct piece p, int x, int y);
 void initBoard();
 
@@ -208,4 +209,4 @@ int validKnightMov(struct piece p, int x, int y){
             (p.y-2 == y && p.x-1 == x) ||
             (p.y+2 == y && p.x-1 == x))&& 
             (&board[x][y] == 0|| p.team != board[x][y].team);
-}
+}*/

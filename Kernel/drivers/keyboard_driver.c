@@ -19,6 +19,8 @@ static int pressingShift =0;
 static int bloqMayus = 0;
 static int pressingCtrl =0;
 
+char c ;
+
 static char asccode[58][2] ={
     { 0, 0 }, { 0, 0 }, { '1','!' }, { '2','@' },
     { '3','#' }, { '4','$' }, { '5','%' }, { '6','^' },
@@ -73,19 +75,12 @@ char getMatchingAscii(int scancode){
   return -1;
 }
 
-//no se usa la variable c
-char getKeyPressed(){
-    int scanCode = getScanCode();
-    char c;
-    if(scanCode == ESC_SCANCODE) {
-      c = ESC_ASCII;
-    } else if(scanCode == ALT_SCAN_CODE) {
-      c = CAPTURE_FLAGS;
-    } else if(codeMatchesAscii(scanCode) && !pressingCtrl){
-      return getMatchingAscii(scanCode);
-    } else {
-      return -1;
-    }
 
-    //aca no devuelve nada
+void getKeyPressed(char* c){
+    int scanCode = getScanCode();
+    if(codeMatchesAscii(scanCode) && !pressingCtrl){
+     *c = getMatchingAscii(scanCode);
+    }else{
+
+    }
 }

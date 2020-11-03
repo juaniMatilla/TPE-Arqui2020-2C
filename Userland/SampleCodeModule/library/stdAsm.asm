@@ -6,6 +6,8 @@
 
 GLOBAL SystemCall00
 GLOBAL SystemCall01
+GLOBAL SystemCall02
+GLOBAL SystemCall03
 
 section .text
 SystemCall00:
@@ -18,8 +20,15 @@ SystemCall01:
     int 80h
     ret 
 
+;SystemCall02:  //matriz
+    ;mov rax, 2
+    ;int 80h
+    ;ret 
 
-    
+SystemCall03:
+    mov rax, 3
+    int 80h
+    ret 
 
 
 

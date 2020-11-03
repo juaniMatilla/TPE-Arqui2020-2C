@@ -3,6 +3,7 @@
 
 #include <stdc.h>
 #include <stdint.h>
+#include <chessFont.h>
 
 void StartShell();
 

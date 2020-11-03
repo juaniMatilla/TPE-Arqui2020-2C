@@ -100,9 +100,10 @@ void int80Handler(uint64_t num, uint64_t *RSP) {
             writeChar(RSP[9]);
             break;
         case 2: 
+             drawMatriz(10, 10, RSP[9], 8, 8, 2, 16777215, 0);
             break;
         case 3:
-        
+            getKeyPressed(RSP[14]);
             break;
         case 4:
             // lee del teclado

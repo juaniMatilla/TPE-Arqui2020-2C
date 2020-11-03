@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <lib.h>
 
-char getKeyPressed();
+void getKeyPressed(char* c);
 
 
 #endif

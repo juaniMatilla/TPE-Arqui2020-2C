@@ -73,6 +73,15 @@ char* getDataTime() {
 
 	return result;
 }
+/*
+int getTime() {
+	int result = getSeconds();
+	int minutes = getMinutes();
+	int hours = getHours()-3;
+	int result ;
+
+	return result ;
+}*/
 
 //copia todo el vector str en buff desde la posicion 'desde' inclusive  
 //dim: dimencion de str

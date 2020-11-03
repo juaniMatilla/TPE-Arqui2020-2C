@@ -1,8 +1,10 @@
 #include <stdc.h>
 
-void getchar()
-{
+char getchar(){
+    char* aux = SystemCall03();
+    return *aux;
 }
+
 void scanf()
 {
 }
@@ -65,6 +67,11 @@ void print(const char *format, ...){
     va_end(ap);
 }
 
+void putMatrix(char *Matrix){
+    //SystemCall02(Matrix);
+    return;
+}
+
 void putStirng(char *String){
     SystemCall00(String);
     return;
@@ -80,3 +87,5 @@ void putInt(int num){
 void putchar(char c){
     SystemCall01(c);
 }
+
+
