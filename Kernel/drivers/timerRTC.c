@@ -1,7 +1,7 @@
 #include "timerRTC.h"
 
 //private function:
-void concaChar(char* buff, char* str, int desde, int dim);
+void strUnion(char* buff, char* str, int desde, int dim);
 void intToStr(int num, char* buff);
  
 int getSeconds() {
@@ -42,32 +42,32 @@ char* getDataTime() {
 	char aux[2];
 	
     intToStr(day, aux);
-    concaChar(result, aux, 0, 2);
+    strUnion(result, aux, 0, 2);
 
 	result[2] = '/';
 
 	intToStr(month, aux);
-	concaChar(result, aux, 3, 2);
+	strUnion(result, aux, 3, 2);
 
 	result[5] = '/';
 
 	intToStr(year, aux);
-	concaChar(result, aux, 6, 2);
+	strUnion(result, aux, 6, 2);
 
 	result[8] = ' ';
 
 	intToStr(hours, aux);
-	concaChar(result, aux, 9, 2);
+	strUnion(result, aux, 9, 2);
 
 	result[11] = ':';
 
 	intToStr(minutes, aux);
-	concaChar(result, aux, 12, 2);
+	strUnion(result, aux, 12, 2);
 
 	result[14] = ':';
 
 	intToStr(seconds, aux);
-	concaChar(result, aux, 15, 2);
+	strUnion(result, aux, 15, 2);
 
     result[17] = '\n';
 
@@ -76,7 +76,7 @@ char* getDataTime() {
 
 //copia todo el vector str en buff desde la posicion 'desde' inclusive  
 //dim: dimencion de str
-void concaChar(char* buff, char* str, int desde, int dim){
+void strUnion(char* buff, char* str, int desde, int dim){
     for (int i = 0; i < dim; i++){
         buff[i+desde] = str[i];
     }
