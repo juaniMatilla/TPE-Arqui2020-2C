@@ -1,24 +1,35 @@
+
 #include <stdint.h>
+#include <chess.h>
 
 //PIECES
+#define EMPTY 0
 #define KING 1
 #define QUEEN 2
 #define KNIGHT 3
 #define ROOK 4
 #define BISHOP 5
 #define PAWN 6
-//
+
+
 
 #define MAX_POS 8
-#define WHITE 1
-#define BLACK 2
+#define WHITE 15395564
+#define BLACK 0
+
+#define BACKGROUND_COLOR_1 9226804
+#define BACKGROUND_COLOR_2 16475904
+#define PIECE_SIZE 4
+#define PIECE_RESOLUTION 16
+
+
 
 //
 #define PLAYER1 1
 #define PLAYER2 2
 
 #define MAXPLAYS 99
-/*
+
 struct piece {
     int x;
     int y;
@@ -30,10 +41,10 @@ struct log{
     int toX;
     int toY;
 };
-struct piece board[MAX_POS][MAX_POS] = {0};
+
+struct piece board[MAX_POS][MAX_POS];
 struct log logs1[MAXPLAYS] = {0};
 struct log logs2[MAXPLAYS] = {0};
-
 
 
 //int validKnightMov(int fromX, int fromY, int toX, int toY);
@@ -42,16 +53,15 @@ void initBoard();
 
 int winner = 0, time1 = 0, time2 = 0, indexLogs1=0,indexLogs2=0;
 
-int main(){
+int playchess(){
     initBoard();
+    updateView(board);/*
     int turn = PLAYER1;
     while(!isWinner()){
         int fromX,fromY,toX,toY;
         initTimer();
-        int enroque = scanf("desde %d,%d hacia %d,%d\n",fromX,fromY,toX,toY);
-        if(enroque)
-            tryEnroque(turn);
-        else if(isValidMovement(toX,toY,board[fromX][fromY])){
+        scanf("desde %d,%d hacia %d,%d\n",fromX,fromY,toX,toY);
+        if(isValidMovement(toX,toY,board[fromX][fromY])){
             if(turn == PLAYER1){
                 logs1[indexLogs1++] = (struct log){board[fromX][fromY], toX,toY};
             }
@@ -68,12 +78,13 @@ int main(){
             turn = PLAYER1;
         }
         updateView(board);
-    }
+    }*/
     return 0;
 }
-
+/*
 int makeMov(int fromX,int fromY,int toX,int toY){
         board[toX][toY] = board[fromX][fromY];
+        
         void *c = 0;
         memcpy((board+fromX+fromY), c,1);
 }
@@ -108,29 +119,75 @@ int isWinner(){
         return 2;
     }
     return 0;
-}
+}*/
 
+void updateView(){
+    int backgroundColor = BACKGROUND_COLOR_2;
+    int aux_x = 0;
+    int aux_y = 0;
+
+    for (int i = 0; i < MAX_POS; i++){
+        for (int j = 0; j < MAX_POS; j++){
+            if(i%2 == 0){//si i es par
+                if(j%2 == 0){
+                    backgroundColor = BACKGROUND_COLOR_1;
+                }else{
+                    backgroundColor = BACKGROUND_COLOR_2;
+                }
+            }else if(j%2 == 0){
+                backgroundColor = BACKGROUND_COLOR_2;
+            }else{
+                backgroundColor = BACKGROUND_COLOR_1;
+            }
+            putMatrix(aux_x, aux_y, charBitmap(board[i][j].type), PIECE_SIZE, board[i][j].team, backgroundColor);
+            aux_x += PIECE_SIZE*PIECE_RESOLUTION;
+        }
+        aux_x = 0;
+        aux_y += PIECE_SIZE*PIECE_RESOLUTION;
+    }
+
+}
 
 void initBoard(){
+    for(int i = 2; i < 6; i++)
+    for (int j = 0; j < MAX_POS; j++)
+     board[i][j] = (struct piece) {0,0,EMPTY,WHITE};  
+
     board[0][0] = (struct piece) {0,0,ROOK,WHITE};
-    board[1][0] = (struct piece) {1,0,KNIGHT,WHITE};
-    board[2][0] = (struct piece) {2,0,BISHOP,WHITE};
-    board[3][0] = (struct piece) {3,0,QUEEN,WHITE};
-    board[4][0] = (struct piece) {4,0,KING,WHITE};
-    board[5][0] = (struct piece) {5,0,BISHOP,WHITE};
-    board[6][0] = (struct piece) {6,0,KNIGHT,WHITE};
-    board[7][0] = (struct piece) {7,0,ROOK,WHITE};
+    board[0][1] = (struct piece) {0,1,KNIGHT,WHITE};
+    board[0][2] = (struct piece) {0,2,BISHOP,WHITE};
+    board[0][3] = (struct piece) {0,3,KING,WHITE};
+    board[0][4] = (struct piece) {0,4,QUEEN,WHITE};
+    board[0][5] = (struct piece) {0,5,BISHOP,WHITE};
+    board[0][6] = (struct piece) {0,6,KNIGHT,WHITE};
+    board[0][7] = (struct piece) {0,7,ROOK,WHITE};
+    board[1][0] = (struct piece) {1,0,PAWN,WHITE};
+    board[1][1] = (struct piece) {1,1,PAWN,WHITE};
+    board[1][2] = (struct piece) {1,2,PAWN,WHITE};
+    board[1][3] = (struct piece) {1,3,PAWN,WHITE};
+    board[1][4] = (struct piece) {1,4,PAWN,WHITE};
+    board[1][5] = (struct piece) {1,5,PAWN,WHITE};
+    board[1][6] = (struct piece) {1,6,PAWN,WHITE};
+    board[1][7] = (struct piece) {1,7,PAWN,WHITE};
 
-    board[0][7] = (struct piece) {0,7,ROOK,BLACK};
-    board[1][7] = (struct piece) {1,7,KNIGHT,BLACK};
-    board[2][7] = (struct piece) {2,7,BISHOP,BLACK};
-    board[3][7] = (struct piece) {3,7,QUEEN,BLACK};
-    board[4][7] = (struct piece) {4,7,KING,BLACK};
-    board[5][7] = (struct piece) {5,7,BISHOP,BLACK};
-    board[6][7] = (struct piece) {6,7,KNIGHT,BLACK};
+    board[7][0] = (struct piece) {7,0,ROOK,BLACK};
+    board[7][1] = (struct piece) {7,0,KNIGHT,BLACK};
+    board[7][2] = (struct piece) {7,2,BISHOP,BLACK};
+    board[7][3] = (struct piece) {7,3,QUEEN,BLACK};
+    board[7][4] = (struct piece) {7,4,KING,BLACK};
+    board[7][5] = (struct piece) {7,5,BISHOP,BLACK};
+    board[7][6] = (struct piece) {7,6,KNIGHT,BLACK};
     board[7][7] = (struct piece) {7,7,ROOK,BLACK};
+    board[6][0] = (struct piece) {6,0,PAWN,BLACK};
+    board[6][1] = (struct piece) {6,1,PAWN,BLACK};
+    board[6][2] = (struct piece) {6,2,PAWN,BLACK};
+    board[6][3] = (struct piece) {6,3,PAWN,BLACK};
+    board[6][4] = (struct piece) {6,4,PAWN,BLACK};
+    board[6][5] = (struct piece) {6,5,PAWN,BLACK};
+    board[6][6] = (struct piece) {6,6,PAWN,BLACK};
+    board[6][7] = (struct piece) {6,7,PAWN,BLACK};
 }
-
+/*
 int isValidMovement(int x, int y,struct piece p){
     if(x > MAX_POS && y > MAX_POS)
         return 0;

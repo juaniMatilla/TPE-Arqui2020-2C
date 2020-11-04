@@ -127,6 +127,38 @@ int drawChar(int x, int y, char character, int fontSize, int fontColor, int back
     return fontSize*CHAR_WIDTH;
 }
 
+//escribe caracteres de resolucion de 16X16 bit
+void drawFont16x16(int x, int y, unsigned char* matriz, int fontSize, int fontColor, int backgroundColor){
+    int aux_x = x;
+    int aux_y = y;
+    int aux = 0;
+    int aux_2 = 0;
+    char bitIsPresent;
+
+    for (int i = 0; i < 16; i++){
+        for (int  j = 0; j < 16; j++){
+            if(j > 8){
+                aux = 1;
+                aux_2 = 8;
+            }else{
+                aux = 0;
+                aux_2 = 0;
+            }
+            bitIsPresent = (1 << (8 - (j-aux_2))) & matriz[(i*2) +aux];  //toDraw[i]; //no se que hace buscar
+            
+            if(bitIsPresent)
+                drawSquare(aux_x, aux_y, fontSize, fontColor);
+            else
+                drawSquare(aux_x, aux_y, fontSize, backgroundColor);
+            
+            aux_x += fontSize;
+        }
+        aux_x = x;
+        aux_y += fontSize;
+    }
+    
+} 
+
 /*
 int drawString(int x, int y, const char* String, int fontSize, int fontColor, int backgroundColor){
     int aux = 0;
@@ -141,7 +173,7 @@ int drawString(int x, int y, const char* String, int fontSize, int fontColor, in
 void writeString(const char* String){
 
     for (int i = 0; String[i] != 0 ; i++)	{
-        if(currentX+(CHAR_WIDTH*defaultFontSize) > SCREEN_WIDTH){
+       if(currentX+(CHAR_WIDTH*defaultFontSize) > SCREEN_WIDTH){
             currentX = 0;
             currentY += (CHAR_HEIGHT*defaultFontSize);
         }
@@ -178,25 +210,3 @@ void clearDisplay(unsigned int backgroundColor){
     currentY = 0;
 }
 
-//usar el mismo sistema que font
-void drawMatriz(int x, int y, const char* matriz, int dimx, int dimy, int fontSize, int fontColor, int backgroundColor){
-    int aux_x = x;
-    int aux_y = y;
-    char bitIsPresent;
-
-    for (int i = 0; i < dimy; i++){
-        for (int  j = 0; j < dimx; j++){
-            bitIsPresent = (1 << (dimx - j)) & matriz[i];  //toDraw[i]; //no se que hace buscar
-            
-            if(bitIsPresent)
-                drawSquare(aux_x, aux_y, fontSize, fontColor);
-            else
-                drawSquare(aux_x, aux_y, fontSize, backgroundColor);
-            
-            aux_x += fontSize;
-        }
-        aux_x = x;
-        aux_y += fontSize;
-    }
-    
-} 

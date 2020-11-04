@@ -14,7 +14,7 @@ void drawRectangle(unsigned int x, unsigned int y, int b, int h, int color);
 void drawSquare(unsigned int x, unsigned int y, int l, int color);
 int drawChar(int x, int y, char character, int fontSize, int fontColor, int backgroundColor);
 int drawString(int x, int y, const char* String, int fontSize, int fontColor, int backgroundColor);
-void drawMatriz(int x, int y, const char* matriz, int dimx, int dimy, int fontSize, int fontColor, int backgroundColor);
+void drawFont16x16(int x, int y, unsigned char* matriz, int fontSize, int fontColor, int backgroundColor);
 
 void writeString(const char* String);
 void writeChar(char String);

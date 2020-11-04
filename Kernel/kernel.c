@@ -90,6 +90,7 @@ int main()
 
 	load_idt();
 	init_VM_Driver();
+	//clearDisplay(16777215);
 
 	
 

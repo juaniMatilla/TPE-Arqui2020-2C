@@ -55,7 +55,7 @@ void execute(char *command){
   }else if(strcmp(command,"date") == 0){
     //date();
   }else if(strcmp(command,"chess") == 0){
-    //chess();
+    playchess();
   }else{
     char *str = "printMem ";
     int i;
@@ -76,8 +76,5 @@ int strcmp(char *str1,char *str2){
     }
     return 1;
 }
-
-
-
 
 

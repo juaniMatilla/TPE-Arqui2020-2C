@@ -67,8 +67,8 @@ void print(const char *format, ...){
     va_end(ap);
 }
 
-void putMatrix(char *Matrix){
-    //SystemCall02(Matrix);
+void putMatrix(int x, int y, unsigned char* matriz, int fontSize, int fontColor, int backgroundColor){
+    SystemCall02(x, y, matriz, fontSize, fontColor, backgroundColor);
     return;
 }
 

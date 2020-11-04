@@ -100,7 +100,10 @@ void int80Handler(uint64_t num, uint64_t *RSP) {
             writeChar(RSP[9]);
             break;
         case 2: 
-             drawMatriz(10, 10, RSP[9], 8, 8, 2, 16777215, 0);
+            
+            drawFont16x16(RSP[9], RSP[8] , RSP[11], RSP[12], RSP[7], RSP[6]);
+            //drawFont16x16(RSP[9], RSP[8], RSP[11], RSP[12], RSP[7], RSP[6]);
+            //aux += 16*5;
             break;
         case 3:
             getKeyPressed(RSP[14]);
