@@ -151,11 +151,15 @@ void writeString(const char* String){
 }
 
 void writeChar(char character){
-    if(currentX+(CHAR_WIDTH*defaultFontSize) > SCREEN_WIDTH){
-        currentX = 0;
-        currentY += (CHAR_HEIGHT*defaultFontSize);
+    if(character == '\n'){
+            newLine();
+    }else{
+        if(currentX+(CHAR_WIDTH*defaultFontSize) > SCREEN_WIDTH){
+            currentX = 0;
+            currentY += (CHAR_HEIGHT*defaultFontSize);
+        }
+        currentX += drawChar(currentX, currentY, character, defaultFontSize, defaultFontColor, defaultBackgroundColor);
     }
-    currentX += drawChar(currentX, currentY, character, defaultFontSize, defaultFontColor, defaultBackgroundColor);
 }
 
 void newLine(){

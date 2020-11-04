@@ -17,6 +17,9 @@ unsigned char _readKey();
 int kbFlag();
 
 
+void _hlt();
+
+
 void _ex00Handler(); //DivByZero
 void _ex01Handler(); // 
 

@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <lib.h>
 #include <keyboard_driver.h>
+#define INPUT_BUFFER 255
 //scancodes de teclas especiales
 #define CONTROL_PRESSED 29
 #define CONTROL_RELEASED 157
@@ -18,6 +19,9 @@
 static int pressingShift =0;
 static int bloqMayus = 0;
 static int pressingCtrl =0;
+
+static char keyboardBuffer[INPUT_BUFFER];
+static unsigned int bufferSize = 0;
 
 char c ;
 
@@ -42,6 +46,22 @@ static char asccode[58][2] ={
 
 int codeMatchesAscii(int scancode){
   return scancode>=0 && scancode<58 && asccode[scancode][1] !=0;
+}
+
+unsigned int readStandardInput(char * buffer,int dim) {
+  while(bufferSize == 0)
+  _hlt();
+  
+  unsigned int i;
+  for(i = 0; i < dim && i < bufferSize; i++)
+    buffer[i] = keyboardBuffer[i];
+  //Ahora muevo el buffer a la izquierda "i" veces
+  if(i > 0)
+    for(int j = 0; j < bufferSize-i; j++)
+      keyboardBuffer[j] = keyboardBuffer[j+i];
+  bufferSize -= i;
+  return i;
+  
 }
 
 int getScanCode(){

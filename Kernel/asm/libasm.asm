@@ -20,7 +20,7 @@
 	GLOBAL _irq05Handler  ;USB
 	;las interupciones de software
 	GLOBAL _irq80Handler
-	
+	GLOBAL _hlt
 	
 	extern  irqDispatcher
 	extern  exDispatcher
@@ -62,6 +62,11 @@ section .text
 	pop rbx
 	pop rax
 %endmacro
+
+_hlt:
+	sti
+	hlt
+	ret
 
 ;recibe un 1byte donde cada uno de sus 8 bit representa una entrada del pic
 ;si la entrada esta en 1 se ignora al dispositivo
@@ -157,7 +162,6 @@ _readKey:
 kbFlag:
     push rbp
     mov rbp, rsp
-
     mov rax,0
 .loop:
     in al,0x64       

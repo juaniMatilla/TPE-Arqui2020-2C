@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <stdc.h>
 
 //PIECES
 #define KING 1
