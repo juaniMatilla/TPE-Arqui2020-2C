@@ -5,20 +5,23 @@ void execute(char *command);
 int strcmp(char *str1,char *str2);
 
 void StartShell(){
+  
+   playchess();
+   /*
     print(" Modulos:\n");
     info();
     char c = 0;
     print("\n ¿Que modulo desea correr? $ ");
     char command[99];
     int i = 0;
-    while ( (c = getchar()  ) != -1){
+    while ( ( getchar(&c)  ) != -1){
         putchar(c);
         command[i++] = c;
         if(c == '\n'){
             execute(command);
             print("\n ¿Que modulo desea correr? $ ");
         }
-    }
+    }*/
     
 }
 
@@ -55,7 +58,9 @@ void execute(char *command){
   }else if(strcmp(command,"date") == 0){
     //date();
   }else if(strcmp(command,"chess") == 0){
+    clearDisplay(0);
     playchess();
+    consoleSize(1024, 0, 768, 0);
   }else{
     char *str = "printMem ";
     int i;

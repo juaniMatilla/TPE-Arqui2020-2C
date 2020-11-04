@@ -12,6 +12,12 @@ unsigned int SCREEN_HEIGHT = 768;
 unsigned int SCREEN_BPP= 3;  //los bytes por cada pixel
 
 //color 0 -> negro, 16777215 -> blanco
+//consola
+ int max_x;
+ int min_x;
+ int max_y;
+ int min_y;
+
 int currentX;
 int currentY;
 int defaultFontColor = 16777215; //blanco
@@ -85,24 +91,6 @@ void drawSquare(unsigned int x, unsigned int y, int l, int color){
     drawRectangle(x, y, l, l, color);
 }
 
-void scrollUp(int cant, unsigned int backgroundColor){
-    uint64_t* screen = screenData->framebuffer;
-
-    int i = 0;
-    int j = (cant * SCREEN_WIDTH * SCREEN_BPP) / 8;
-    while (j < (SCREEN_HEIGHT * SCREEN_WIDTH * SCREEN_BPP) /8){
-        screen[i] = screen[j];
-        i++;
-        j++;
-    }
-    for (int  i = SCREEN_HEIGHT - cant; i < SCREEN_HEIGHT ; i++)
-        for (int  j = 0; j < SCREEN_WIDTH*SCREEN_BPP; j++)
-            drawPixel(j,i,backgroundColor);
-
-    //currentX = 0;
-    currentY -= (CHAR_HEIGHT*defaultFontSize);
-}
-
 //devulve el ancho del caracter que se imprimio
 int drawChar(int x, int y, char character, int fontSize, int fontColor, int backgroundColor){
     int aux_x = x;
@@ -127,6 +115,24 @@ int drawChar(int x, int y, char character, int fontSize, int fontColor, int back
     return fontSize*CHAR_WIDTH;
 }
 
+void scrollUp(int cant, unsigned int backgroundColor){
+    uint64_t* screen = screenData->framebuffer;
+
+    int i = 0;
+    int j = (cant * SCREEN_WIDTH * SCREEN_BPP) / 8;
+    while (j < (SCREEN_HEIGHT * SCREEN_WIDTH * SCREEN_BPP) /8){
+        screen[i] = screen[j];
+        i++;
+        j++;
+    }
+    for (int  i = SCREEN_HEIGHT - cant; i < SCREEN_HEIGHT ; i++)
+        for (int  j = 0; j < SCREEN_WIDTH*SCREEN_BPP; j++)
+            drawPixel(j,i,backgroundColor);
+
+    //currentX = 0;
+    currentY -= (CHAR_HEIGHT*defaultFontSize);
+}
+
 //escribe caracteres de resolucion de 16X16 bit
 void drawFont16x16(int x, int y, unsigned char* matriz, int fontSize, int fontColor, int backgroundColor){
     int aux_x = x;
@@ -135,7 +141,7 @@ void drawFont16x16(int x, int y, unsigned char* matriz, int fontSize, int fontCo
     int aux_2 = 0;
     char bitIsPresent;
 
-    for (int i = 0; i < 16; i++){
+    for (int i = 0; i < CHAR_HEIGHT; i++){
         for (int  j = 0; j < 16; j++){
             if(j > 8){
                 aux = 1;
@@ -159,46 +165,6 @@ void drawFont16x16(int x, int y, unsigned char* matriz, int fontSize, int fontCo
     
 } 
 
-/*
-int drawString(int x, int y, const char* String, int fontSize, int fontColor, int backgroundColor){
-    int aux = 0;
-    int i;
-    for (i = 0; String[i] != 0 ; i++)	{
-        drawChar(x+aux, y, String[i], fontSize, fontColor, backgroundColor);
-		aux += (CHAR_WIDTH*fontSize);
-	}
-    return aux;	
-}*/
-
-void writeString(const char* String){
-
-    for (int i = 0; String[i] != 0 ; i++)	{
-       if(currentX+(CHAR_WIDTH*defaultFontSize) > SCREEN_WIDTH){
-            currentX = 0;
-            currentY += (CHAR_HEIGHT*defaultFontSize);
-        }
-        currentX += drawChar(currentX, currentY, String[i], defaultFontSize, defaultFontColor, defaultBackgroundColor);
-	}
-    return;
-}
-
-void writeChar(char character){
-    if(character == '\n'){
-            newLine();
-    }else{
-        if(currentX+(CHAR_WIDTH*defaultFontSize) > SCREEN_WIDTH){
-            currentX = 0;
-            currentY += (CHAR_HEIGHT*defaultFontSize);
-        }
-        currentX += drawChar(currentX, currentY, character, defaultFontSize, defaultFontColor, defaultBackgroundColor);
-    }
-}
-
-void newLine(){
-    currentX = 0;
-    currentY += (CHAR_HEIGHT*defaultFontSize);
-}
-
 void clearDisplay(unsigned int backgroundColor){
     char* pos = screenData->framebuffer;
     for (int  i = 0; i < SCREEN_BPP * SCREEN_HEIGHT * SCREEN_WIDTH; i+= SCREEN_BPP){
@@ -210,3 +176,88 @@ void clearDisplay(unsigned int backgroundColor){
     currentY = 0;
 }
 
+//Console///////////////////////////////////////////////////////////////////// 
+void setConsoleSize(int maxX, int minX, int maxY, int minY){
+    max_x = maxX;
+    min_x = minX;
+    currentX = minX;
+    max_y = maxY;
+    min_y = minY;
+    currentY = minY;
+}
+
+void writeConsole(const char* String){
+    for (int i = 0; String[i] != 0 ; i++)	{
+       writeCharConsole(String[i]);
+    }
+    return;
+}
+
+void writeCharConsole(char character){
+    if(character == '\n'){
+            newLineConsole();
+            return;
+    }
+    if(currentX+(CHAR_WIDTH*defaultFontSize) > max_x){
+        currentX = min_x;
+        if(currentY+(CHAR_HEIGHT*defaultFontSize) > max_y){
+            scrollUpConsole();
+        }else{
+            currentY += (CHAR_HEIGHT*defaultFontSize);
+        }
+    }
+    currentX += drawChar(currentX, currentY, character, defaultFontSize, defaultFontColor, defaultBackgroundColor);
+}
+
+
+void newLineConsole(){
+    currentX = min_x;
+    currentY += (CHAR_HEIGHT*defaultFontSize);
+    if( currentY > max_y){
+        scrollUpConsole();
+        currentY -= (CHAR_HEIGHT*defaultFontSize);
+    }
+}
+
+ unsigned where(int j, int i){
+        return (j + i*SCREEN_WIDTH) * SCREEN_BPP;
+    }
+
+void scrollUpConsole(){
+    char* screen = screenData->framebuffer;
+    
+    int cant = CHAR_HEIGHT*defaultFontSize; //cantidad de linea
+    int consoleWidth = max_x - min_x;
+    //scrollUp(cant,16777215 );
+    
+    //int i = ((min_x + min_y*SCREEN_WIDTH)*SCREEN_BPP);
+    //int j = ((min_x + (min_y +cant)*SCREEN_WIDTH)*SCREEN_BPP);
+
+    int aux1 ;
+    int aux2;
+    //drawSquare(min_x, min_y, 5, 9898758);
+    //drawSquare(min_x, (min_y+cant), 5, 9898758);
+    //drawSquare(max_x*SCREEN_BPP, min_y, 5, 9898758);
+    //drawSquare(max_x, max_y, 5, 9898758);
+
+   
+
+    for (int i = 0; i < (max_y-min_y) ; i++){
+        for (int j = 0; j < (max_x-min_x); j++){
+            aux1 = where(min_x+j, min_y+i);
+            aux2 = where(min_x+j, min_y+i+cant);
+            screen[aux1] = screen[aux2]; 
+            screen[aux1+1] = screen[aux2+1]; 
+            screen[aux1+2] = screen[aux2+2]; 
+        }
+     }
+
+    drawRectangle(min_x, (max_y), (max_x-min_x), cant, defaultBackgroundColor);
+/*
+    for (int i = (max_y-cant); i < max_y; i++)
+        for (int  j = min_x; j < max_x; j++)
+            drawPixel(j,i,defaultBackgroundColor);*/
+
+    currentX = min_x; 
+    currentY -= (CHAR_HEIGHT*defaultFontSize);
+}

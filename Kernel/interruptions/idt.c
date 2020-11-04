@@ -1,9 +1,5 @@
 
 #include "idt.h"
-//#include <stdarg.h> //permite arumentos variables
-
-#pragma pack(push)		/* Push de la alineación actual */
-#pragma pack (1) 		/* Alinear las siguiente estructuras a 1 byte */
 
 /* Descriptor de interrupcion */
 typedef struct {
@@ -79,8 +75,7 @@ void irqDispatcher(uint64_t irq) {
             //testerTick();
 			break;
         case 1: // Keyboard
-            //testerkeyboard();
-            //kb_fetch();
+            keyboard_handler();
             break;
         case 8: //RTC int
             //purebaRTC();
@@ -94,21 +89,32 @@ void int80Handler(uint64_t num, uint64_t *RSP) {
    // rdi -> RSP[9], rsi -> RSP[8]
     switch (num) {
         case 0:
-            writeString(RSP[9]);
+            writeConsole(RSP[9]);
             break;
         case 1:
-            writeChar(RSP[9]);
+            writeCharConsole(RSP[9]);
             break;
-        case 2: 
-            
+        case 2:
+            setConsoleSize(RSP[9], RSP[8] , RSP[11], RSP[12]);
+            break;
+        case 3: 
             drawFont16x16(RSP[9], RSP[8] , RSP[11], RSP[12], RSP[7], RSP[6]);
-            //drawFont16x16(RSP[9], RSP[8], RSP[11], RSP[12], RSP[7], RSP[6]);
-            //aux += 16*5;
-            break;
-        case 3:
-            getKeyPressed(RSP[14]);
             break;
         case 4:
+            clearDisplay(RSP[9]);
+            break;
+        case 5:
+            RSP[14] = readStandardInput(RSP[9], RSP[8]);
+            break;
+        case 6:
+            // lee del teclado
+ 
+            break;
+        case 7:
+            // lee del teclado
+ 
+            break;
+        case 8:
             // lee del teclado
  
             break;

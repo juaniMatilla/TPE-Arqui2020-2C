@@ -54,13 +54,25 @@ void initBoard();
 int winner = 0, time1 = 0, time2 = 0, indexLogs1=0,indexLogs2=0;
 
 int playchess(){
+    
+    clearDisplay(BLACK);
     initBoard();
-    updateView(board);/*
+    updateView(board);
+    consoleSize(1016, 520, 500, 10);
+    char c ;
+    while (1){
+        getchar(c);
+        putchar(c);
+    }
+    
+  
+
+/*
     int turn = PLAYER1;
     while(!isWinner()){
         int fromX,fromY,toX,toY;
         initTimer();
-        scanf("desde %d,%d hacia %d,%d\n",fromX,fromY,toX,toY);
+        //scanf("desde %d,%d hacia %d,%d\n",fromX,fromY,toX,toY);
         if(isValidMovement(toX,toY,board[fromX][fromY])){
             if(turn == PLAYER1){
                 logs1[indexLogs1++] = (struct log){board[fromX][fromY], toX,toY};
@@ -81,6 +93,7 @@ int playchess(){
     }*/
     return 0;
 }
+
 /*
 int makeMov(int fromX,int fromY,int toX,int toY){
         board[toX][toY] = board[fromX][fromY];
@@ -119,8 +132,8 @@ int isWinner(){
         return 2;
     }
     return 0;
-}*/
-
+}
+*/
 void updateView(){
     int backgroundColor = BACKGROUND_COLOR_2;
     int aux_x = 0;
@@ -139,7 +152,7 @@ void updateView(){
             }else{
                 backgroundColor = BACKGROUND_COLOR_1;
             }
-            putMatrix(aux_x, aux_y, charBitmap(board[i][j].type), PIECE_SIZE, board[i][j].team, backgroundColor);
+            Matrix16x16(aux_x, aux_y, charBitmap(board[i][j].type), PIECE_SIZE, board[i][j].team, backgroundColor);
             aux_x += PIECE_SIZE*PIECE_RESOLUTION;
         }
         aux_x = 0;
@@ -148,10 +161,10 @@ void updateView(){
 
 }
 
-void initBoard(){
+void initBoard(){   
     for(int i = 2; i < 6; i++)
-    for (int j = 0; j < MAX_POS; j++)
-     board[i][j] = (struct piece) {0,0,EMPTY,WHITE};  
+        for (int j = 0; j < MAX_POS; j++)
+            board[i][j] = (struct piece) {i,j,EMPTY,WHITE};  
 
     board[0][0] = (struct piece) {0,0,ROOK,WHITE};
     board[0][1] = (struct piece) {0,1,KNIGHT,WHITE};
@@ -265,4 +278,5 @@ int validKnightMov(struct piece p, int x, int y){
             (p.y-2 == y && p.x-1 == x) ||
             (p.y+2 == y && p.x-1 == x))&& 
             (&board[x][y] == 0|| p.team != board[x][y].team);
-}*/
+}
+*/

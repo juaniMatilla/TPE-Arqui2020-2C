@@ -1,128 +1,3 @@
-make all
-make clean
-make all
-make all
-make clean
-make all
-make all
-make cl
-make all
-make clean
-make all
-make all
-make clean
-make all
-make clean
-make all
-make clean
-make clean
-make clean
-make all
-make clean
-make all
-make clean
-make all
-make all
-make clean
-make all
-make all
-make clean
-make all
-make clean
-make all
-make all
-make all
-make all
-make all
-make clean
-make all
-gcc -m64 -fno-exceptions -std=c99 -Wall -ffreestanding -nostdlib -fno-common -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -fno-builtin-malloc -fno-builtin-free -fno-builtin-realloc -I./include -c sampleCodeModule.c _loader.c
-ls
-cd Userland/
-gcc -m64 -fno-exceptions -std=c99 -Wall -ffreestanding -nostdlib -fno-common -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -fno-builtin-malloc -fno-builtin-free -fno-builtin-realloc -I./include -c sampleCodeModule.c _loader.c
-ls
-cd SampleCodeModule/
-gcc -m64 -fno-exceptions -std=c99 -Wall -ffreestanding -nostdlib -fno-common -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -fno-builtin-malloc -fno-builtin-free -fno-builtin-realloc -I./include -c sampleCodeModule.c _loader.c
-gcc -m64 -fno-exceptions -std=c99 -Wall -ffreestanding -nostdlib -fno-common -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -fno-builtin-malloc -fno-builtin-free -fno-builtin-realloc -I./include -c userProgram/shell.c _loader.c
-cd ..
-cd ..
-make all
-make clean
-make all
-exit
-make all
-make clean
-make all
-make clean
-make all
-clean
-clear
-make clean
-clear
-make all
------------------------------------------------------------------------------------
-make all
-clear
-make clean
------------------------------------------------------------------------------------
-make all
-make clean
------------------------------------------------------------------------------------
-make all
-make all
-make clean
------------------------------------------------------------------------------------
-make all
-make clean
------------------------------------------------------------------------------------
-make all
-make clean
------------------------------------------------------------------------------------
-make all
-make clean
-make all
-make all
-make clean
-make all
-make clena
-make clean
-make all
-make all
-make all
-make clean
-make all
-make all
-make clean
-make all
-make clean
------------------------------------------------------------------------------------
-make all
------------------------------------------------------------------------------------
-make all
------------------------------------------------------------------------------------
-make all
-make clean
------------------------------------------------------------------------------------
-make clean
-make clean
-make clean
-make all
-make clean
-make all
-make clean
-make all
-make all
-make clean
-make all
-make clean
-make all
-make clean
------------------------------------------------------------------------------------
-make all
-make all
-make clean
------------------------------------------------------------------------------------
-make clean
 -----------------------------------------------------------------------------------
 make all
 make clean
@@ -490,6 +365,131 @@ make all
 make all
 make all
 make clean
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
 make all
 make all
 make all

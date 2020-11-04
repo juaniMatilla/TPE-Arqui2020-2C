@@ -7,9 +7,13 @@ void SystemCall00(const char *format); //imprime un String
 
 void SystemCall01(char c); //imprime un caracter
 
-void SystemCall02(int x, int y, unsigned char* matriz, int fontSize, int fontColor, int backgroundColor);
+void SystemCall02(int maxX, int minX, int maxY, int minY);  //setConsoleSize
 
-char* SystemCall03(void); //devulve una tecla
+void SystemCall03(int x, int y, unsigned char* matriz, int fontSize, int fontColor, int backgroundColor);  //drawFont16x16
+
+void SystemCall04(unsigned int backgroundColor); //clearDisplay
+
+unsigned int SystemCall05(char *buffer,int dim); //devulve una tecla
 
 
 #endif 

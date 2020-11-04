@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <lib.h>
 #include <keyboard_driver.h>
-#define INPUT_BUFFER 255
+
 //scancodes de teclas especiales
 #define CONTROL_PRESSED 29
 #define CONTROL_RELEASED 157
@@ -15,15 +15,19 @@
 #define ESC_ASCII 27
 #define CAPTURE_FLAGS 2
 #define ALT_SCAN_CODE 0xb8
-//estado de teclas especiales
-static int pressingShift =0;
-static int bloqMayus = 0;
-static int pressingCtrl =0;
-
+//entre codes de pressed y released hay un defasaje de 128
+#define INPUT_BUFFER 255 //Cant max de caracteres en buffer de input
+extern void saveRegisters(uint64_t rsp);
 static char keyboardBuffer[INPUT_BUFFER];
 static unsigned int bufferSize = 0;
 
-char c ;
+//estado de teclas especiales
+static int pressingShift =0;
+static int bloqMayus = 0; //boolean
+
+static int pressingCtrl =0;
+extern uint8_t getKeyScanCode();
+
 
 static char asccode[58][2] ={
     { 0, 0 }, { 0, 0 }, { '1','!' }, { '2','@' },
@@ -43,14 +47,50 @@ static char asccode[58][2] ={
     {   0,0   }, { ' ',' ' }
 };
 
-
 int codeMatchesAscii(int scancode){
-  return scancode>=0 && scancode<58 && asccode[scancode][1] !=0;
+  return scancode >=0 && scancode< 58 && asccode[scancode][1] !=0;
+}
+
+int getScanCode(){
+  int code = getKeyScanCode();
+  if(code==CONTROL_PRESSED)
+    pressingCtrl=1;
+  else if(code == CONTROL_RELEASED)
+    pressingCtrl=0;
+  else if(code == LEFT_SHIFT_PRESSED || code == RIGHT_SHIFT_PRESSED)
+    pressingShift=1;
+  else if (code== LEFT_SHIFT_RELEASED || code == RIGHT_SHIFT_RELEASED)
+    pressingShift=0;
+  else if(code==BLOQMAYUS)
+    bloqMayus = !bloqMayus;
+
+  return code;
+}
+
+int isLetter(char c){
+  return (c>='a' && c<='z') || (c>='A' && c<='Z');
+}
+
+char getMatchingAscii( int scancode){
+  if(codeMatchesAscii(scancode)){
+    if(bloqMayus && isLetter(asccode[scancode][1])){
+      return asccode[scancode][1];
+    }
+    // si llega aca es porque esta con bloqmayus pero no tocando una letra, en cuyo caso debo ignorar este flag, 
+    // o porque no está tocando la mayus, asi q solo me falta comprobar el shift
+    return asccode[scancode][pressingShift]; 
+  }
+  return -1;
+}
+
+void onKeyPressed(char chr) {
+  if(bufferSize < INPUT_BUFFER)
+    keyboardBuffer[bufferSize++] = chr;
 }
 
 unsigned int readStandardInput(char * buffer,int dim) {
   while(bufferSize == 0)
-  _hlt();
+    return;//_hlt();
   
   unsigned int i;
   for(i = 0; i < dim && i < bufferSize; i++)
@@ -61,46 +101,27 @@ unsigned int readStandardInput(char * buffer,int dim) {
       keyboardBuffer[j] = keyboardBuffer[j+i];
   bufferSize -= i;
   return i;
-  
 }
 
-int getScanCode(){
-  int code = kbFlag();// funcion asembler 
-  if(code == CONTROL_PRESSED)
-    pressingCtrl = 1;
-  else if(code == CONTROL_RELEASED)
-    pressingCtrl = 0;
-  else if(code == LEFT_SHIFT_PRESSED || code == RIGHT_SHIFT_PRESSED)
-    pressingShift = 1;
-  else if (code== LEFT_SHIFT_RELEASED || code == RIGHT_SHIFT_RELEASED)
-    pressingShift=0;
-  else if(code == BLOQMAYUS)
-    bloqMayus = !bloqMayus;
-  return code;
-}
-
-int isLetter(char c){
-  return (c>='a' && c<='z') || (c>='A' && c<='Z');
-}
-
-char getMatchingAscii(int scancode){
-  if(codeMatchesAscii(scancode)){
-    if( bloqMayus && isLetter( asccode[scancode][1] ) ){
-      return asccode[scancode][1];
-    }
-    // si llega aca es porque esta con bloqmayus pero no tocando una letra, en cuyo caso debo ignorar este flag, 
-    // o porque no está tocando la mayus, asi q solo me falta comprobar el shift
-    return asccode[scancode][pressingShift]; 
-  }
-  return -1;
-}
-
-
-void getKeyPressed(char* c){
+//void keyboard_handler(uint64_t rsp){
+void keyboard_handler(){
     int scanCode = getScanCode();
-    if(codeMatchesAscii(scanCode) && !pressingCtrl){
-     *c = getMatchingAscii(scanCode);
-    }else{
+    char c;
+    if(scanCode == ESC_SCANCODE) {
+      c = ESC_ASCII;
+    } else if(scanCode == ALT_SCAN_CODE) {
+      c = CAPTURE_FLAGS;
+
+      //saveRegisters(rsp);
 
     }
+    else if(codeMatchesAscii(scanCode) && !pressingCtrl){
+        c = getMatchingAscii(scanCode);
+    } else {
+      return;
+    }
+     c = getMatchingAscii(scanCode);
+    
+    onKeyPressed(c);
+  
 }
