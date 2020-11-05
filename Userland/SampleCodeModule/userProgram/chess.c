@@ -11,11 +11,14 @@
 #define BISHOP 5
 #define PAWN 6
 
+#define LEFT 10
+#define RIGHT 20
+
 
 
 #define MAX_POS 8
-#define WHITE 15395564
-#define BLACK 0
+#define BLACK 15395564
+#define WHITE 0
 
 #define BACKGROUND_COLOR_1 9226804
 #define BACKGROUND_COLOR_2 16475904
@@ -42,37 +45,33 @@ struct log{
     int toY;
 };
 
-struct piece board[MAX_POS][MAX_POS];
-struct log logs1[MAXPLAYS] = {0};
-struct log logs2[MAXPLAYS] = {0};
+struct piece board[MAX_POS+1][MAX_POS+1];
+struct log logs1[MAXPLAYS];
+struct log logs2[MAXPLAYS];
 
 
 //int validKnightMov(int fromX, int fromY, int toX, int toY);
 int validPawnMov(struct piece p, int x, int y);
 void initBoard();
-
+int isWinner();
+int makeMov(int fromX,int fromY,int toX,int toY);
+void updateView();
+int isValidMovement(int x, int y,struct piece p);
+int validPawnMov(struct piece p, int x, int y);
+int validKingMov(struct piece p, int x, int y);
+int noMoveKing(int team);
+int noPiecesBetween(int side,int team);
+int dangerPlace(int x,int y);
 int winner = 0, time1 = 0, time2 = 0, indexLogs1=0,indexLogs2=0;
 
 int playchess(){
-    
-    clearDisplay(BLACK);
     initBoard();
     updateView(board);
-    consoleSize(1016, 520, 500, 10);
-    char c ;
-    while (1){
-        getchar(c);
-        putchar(c);
-    }
-    
-  
-
-/*
     int turn = PLAYER1;
     while(!isWinner()){
         int fromX,fromY,toX,toY;
         initTimer();
-        //scanf("desde %d,%d hacia %d,%d\n",fromX,fromY,toX,toY);
+        scanf("desde %d,%d hacia %d,%d\n",fromX,fromY,toX,toY);
         if(isValidMovement(toX,toY,board[fromX][fromY])){
             if(turn == PLAYER1){
                 logs1[indexLogs1++] = (struct log){board[fromX][fromY], toX,toY};
@@ -90,11 +89,10 @@ int playchess(){
             turn = PLAYER1;
         }
         updateView(board);
-    }*/
+    }
     return 0;
 }
 
-/*
 int makeMov(int fromX,int fromY,int toX,int toY){
         board[toX][toY] = board[fromX][fromY];
         
@@ -133,14 +131,14 @@ int isWinner(){
     }
     return 0;
 }
-*/
+
 void updateView(){
     int backgroundColor = BACKGROUND_COLOR_2;
     int aux_x = 0;
     int aux_y = 0;
 
-    for (int i = 0; i < MAX_POS; i++){
-        for (int j = 0; j < MAX_POS; j++){
+    for (int i = 0; i < MAX_POS+1; i++){
+        for (int j = 0; j < MAX_POS+1; j++){
             if(i%2 == 0){//si i es par
                 if(j%2 == 0){
                     backgroundColor = BACKGROUND_COLOR_1;
@@ -152,7 +150,7 @@ void updateView(){
             }else{
                 backgroundColor = BACKGROUND_COLOR_1;
             }
-            Matrix16x16(aux_x, aux_y, charBitmap(board[i][j].type), PIECE_SIZE, board[i][j].team, backgroundColor);
+            putMatrix(aux_x, aux_y, charBitmap(board[i][j].type), PIECE_SIZE, board[i][j].team, backgroundColor);
             aux_x += PIECE_SIZE*PIECE_RESOLUTION;
         }
         aux_x = 0;
@@ -161,10 +159,14 @@ void updateView(){
 
 }
 
-void initBoard(){   
+void initBoard(){
+    for (int i = 0; i < MAX_POS; i++)
+        board[8][i] = (struct piece) {i,8,i+7,WHITE};  
+    for (int i = 0; i < MAX_POS; i++)
+        board[i][8] = (struct piece) {i,i+14,i+15,WHITE};  
     for(int i = 2; i < 6; i++)
-        for (int j = 0; j < MAX_POS; j++)
-            board[i][j] = (struct piece) {i,j,EMPTY,WHITE};  
+    for (int j = 0; j < MAX_POS; j++)
+     board[i][j] = (struct piece) {i,j,EMPTY,WHITE};  
 
     board[0][0] = (struct piece) {0,0,ROOK,WHITE};
     board[0][1] = (struct piece) {0,1,KNIGHT,WHITE};
@@ -200,7 +202,7 @@ void initBoard(){
     board[6][6] = (struct piece) {6,6,PAWN,BLACK};
     board[6][7] = (struct piece) {6,7,PAWN,BLACK};
 }
-/*
+
 int isValidMovement(int x, int y,struct piece p){
     if(x > MAX_POS && y > MAX_POS)
         return 0;
@@ -217,7 +219,7 @@ int isValidMovement(int x, int y,struct piece p){
                     }
                 }
             }
-            return &board[x][y] ||(board[x][y].team != p.team);
+            return board[x][y].type ==  EMPTY ||(board[x][y].team != p.team);
         case PAWN:
             return validPawnMov(p,x,y);
         case KNIGHT:
@@ -229,14 +231,14 @@ int isValidMovement(int x, int y,struct piece p){
                         return 0;
                     }
                 }
-                return  &board[x][y] == 0||(board[x][y].team != p.team);
+                return  board[x][y].type == EMPTY||(board[x][y].team != p.team);
             }else if(p.y == y){
                 for(int j = p.x-1; j <= y;j++){
                     if(!&board[j][y]){
                         return 0;
                     }
                 }
-                return  &board[x][y] == 0 ||(board[x][y].team != p.team);
+                return  board[x][y].type == EMPTY ||(board[x][y].team != p.team);
             }else{
                 return 0;
             }
@@ -249,26 +251,69 @@ int isValidMovement(int x, int y,struct piece p){
                         }
                     }
                 }
-                return  &board[x][y] == 0 ||(board[x][y].team != p.team);
+                return  board[x][y].type == EMPTY ||(board[x][y].team != p.team);
             };
     }
     return 0;
 }
 
 int validPawnMov(struct piece p, int x, int y){
-    return (p.y == 1 && p.team == WHITE && p.y <= y-2 && p.x == x && &board[x][y] ==0) ||
+    return (p.y == 1 && p.team == WHITE && p.y <= y-2 && p.x == x && board[x][y].type == EMPTY) ||
             (p.y == 6 && p.team == BLACK && p.y >= y+2 && p.x == x) ||
-            (p.team == BLACK && p.y == y-1 && p.x == x && &board[x][y] ==0) ||
-            (p.team == WHITE && p.y == y+1 && p.x == x && &board[x][y] ==0) ||
-            (p.team == WHITE && p.y == y+1 && p.x == x+1 && (&board[x][y] == 0|| p.team != board[x][y].team)) ||
-            (p.team == WHITE && p.y == y+1 && p.x == x-1 && (&board[x][y] == 0|| p.team != board[x][y].team)) ||
-            (p.team == BLACK && p.y == y-1 && p.x == x+1 && (&board[x][y] == 0|| p.team != board[x][y].team)) ||
-            (p.team == BLACK && p.y == y-1 && p.x == x-1 && (&board[x][y] == 0|| p.team != board[x][y].team));
+            (p.team == BLACK && p.y == y-1 && p.x == x && board[x][y].type == EMPTY) ||
+            (p.team == WHITE && p.y == y+1 && p.x == x && board[x][y].type == EMPTY) ||
+            (p.team == WHITE && p.y == y+1 && p.x == x+1 && (board[x][y].type == EMPTY|| p.team != board[x][y].team)) ||
+            (p.team == WHITE && p.y == y+1 && p.x == x-1 && (board[x][y].type == EMPTY|| p.team != board[x][y].team)) ||
+            (p.team == BLACK && p.y == y-1 && p.x == x+1 && (board[x][y].type == EMPTY|| p.team != board[x][y].team)) ||
+            (p.team == BLACK && p.y == y-1 && p.x == x-1 && (board[x][y].type == EMPTY|| p.team != board[x][y].team));
 
 }
 
+int validKingMov(struct piece p, int x, int y){
+    int enroqueType, team;
+    if(p.team == WHITE && y == 0 && p.x == 4 && p.y == 0 && x == 6){
+        enroqueType = RIGHT;
+        if(noMoveKing(WHITE) && noMoveRook(p,enroqueType,WHITE) && noPiecesBetween(enroqueType,WHITE)){
+            for(int i = p.x ; i <= x;i++){
+                if(dangerPlace(i,y)){
+                    return 0;
+                }
+            }
+            return 1;
+        }
+    }else if(p.team == WHITE && p.x == 4 && p.y == 0 && x == 2){
+        enroqueType = LEFT;
+        if(noMoveKing(WHITE) && noMoveRook(p,enroqueType,WHITE) && noPiecesBetween(enroqueType,WHITE)){
+            for(int i = p.x ; i >= x;i--){
+                if(dangerPlace(i,y)){
+                    return 0;
+                }
+            }
+            return 1;
+        }
+    }else  if(p.team == BLACK && p.x == 4 && p.y == 7 && x == 6){
+         enroqueType = RIGHT;
+        if(noMoveKing(BLACK) && noMoveRook(p,enroqueType,BLACK) && noPiecesBetween(enroqueType,BLACK)){
+            for(int i = p.x ; i <= x;i++){
+                if(dangerPlace(i,y)){
+                    return 0;
+                }
+            }
+            return 1;
+        }
+    }else if(p.team == BLACK && p.x == 4 && p.y == 7 && x == 2){
+        enroqueType = LEFT;
+        if(noMoveKing(BLACK) && noMoveRook(p,enroqueType,BLACK) && noPiecesBetween(enroqueType,BLACK)){
+            for(int i = p.x ; i >= x;i--){
+                if(dangerPlace(i,y)){
+                    return 0;
+                }
+            }
+            return 1;
+        }
+    }
 
-int validKnightMov(struct piece p, int x, int y){
+
     return ((p.x+2 == x && p.y+1 == y )||
             (p.x-2 == x && p.y+1 == y ) ||
             (p.x-2 == x && p.y-1 == y) ||
@@ -277,6 +322,105 @@ int validKnightMov(struct piece p, int x, int y){
             (p.y-2 == y && p.x+1 == x) ||
             (p.y-2 == y && p.x-1 == x) ||
             (p.y+2 == y && p.x-1 == x))&& 
-            (&board[x][y] == 0|| p.team != board[x][y].team);
+            (board[x][y].type == EMPTY|| p.team != board[x][y].team);
 }
-*/
+
+int noMoveKing(int team){
+    if(team == WHITE){
+        for(int i = 0;i<=indexLogs1;i++){
+            if(logs1[i].p.type == KING)
+                return 0;
+        }
+        return 1;
+    }else{
+        for(int i = 0;i<=indexLogs2;i++){
+            if(logs2[i].p.type == KING)
+                return 0;
+        }
+        return 1;
+    }
+    return 0;
+}
+
+int noMoveRook(struct piece p, int side,int team){
+    if(team == WHITE&& side == RIGHT){
+        for(int i = 0;i<=indexLogs1;i++){
+            if(logs1[i].p.type == ROOK  && p.x != 7)
+                return 0;
+        }
+        return 1;
+    }else if(team == WHITE && side == LEFT){
+        for(int i = 0;i<=indexLogs1;i++){
+            if(logs1[i].p.type == ROOK  && p.x != 0)
+                return 0;
+        }
+        return 1;
+    }else if(team == BLACK && side == LEFT){
+        for(int i = 0;i<=indexLogs2;i++){
+            if(logs2[i].p.type == ROOK  && p.x != 0)
+                return 0;
+        }
+        return 1;
+    }else{
+        for(int i = 0;i<=indexLogs2;i++){
+            if(logs2[i].p.type == ROOK  && p.x != 0)
+                return 0;
+        }
+        return 1;
+    }
+    return 0;
+}
+
+int noPiecesBetween(int side,int team){
+    if(side == LEFT && team == WHITE){
+        if(board[0][0].type == ROOK && board[0][4].type == KING){
+            for (int i = 1; i >= 3; i--){
+                if(board[i][0].type != EMPTY){
+                    return 0;
+                }
+            }
+            return 1;
+        }
+    }else if(side == RIGHT && team == WHITE){
+        if(board[7][0].type == ROOK && board[0][4].type == KING){
+            for (int i = 5; i <= 6; i++){
+                if(board[i][0].type != EMPTY){
+                    return 0;
+                }
+            }
+            return 1;
+        }
+    }else  if(side == LEFT && team == BLACK){
+        if(board[7][0].type == ROOK && board[7][4].type == KING){
+            for (int i = 1; i >= 3; i--){
+                if(board[i][7].type != EMPTY){
+                    return 0;
+                }
+            }
+            return 1;
+        }
+    }else{
+        if(board[7][7].type == ROOK && board[7][4].type == KING){
+            for (int i = 5; i <= 6; i++){
+                if(board[i][7].type != EMPTY){
+                    return 0;
+                }
+            }
+            return 1;
+        }
+    }
+}
+
+int dangerPlace(int x,int y){
+    for (int i = 0; i < MAX_POS; i++)
+    {
+        for (int j = 0; j < MAX_POS; j++)
+        {
+            if(isValidMovement(x,y,board[i][j])){
+                return 1;
+            }
+        }
+        
+    }
+    return 0;
+}
