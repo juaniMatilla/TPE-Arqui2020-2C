@@ -33,6 +33,13 @@
 #define PLAYER2 2
 
 #define MAXPLAYS 99
+/*
+typedef struc{
+    int x;
+    int y;
+    int type;
+    int team;
+}piece;*/
 
 struct piece {
     int x;
@@ -69,8 +76,17 @@ int winner = 0, time1 = 0, time2 = 0, indexLogs1=0,indexLogs2=0;
 int playchess(){
     initBoard();
     updateView(board);
+    consoleSize(1016, 600, 500, 10);
     int turn = PLAYER1;
-    while(!isWinner()){
+    /*
+    char buff;
+    while(1){
+        if(getchar(&buff) == 1){
+            putchar(buff);
+        }
+    }*/
+
+    //while(!isWinner()){
         int fromX = 0,fromY = 0,toX = 7,toY =2;
         //board[fromX][fromY] = (struct piece){fromX,fromY,EMPTY,-1};
         // //initTimer();
@@ -95,18 +111,21 @@ int playchess(){
         // }
         updateView(board);
         // break;
-    }
+   // }
     return 0;
 }
 void makeMov(int fromX,int fromY,int toX,int toY){
-        // int aux = BISHOP;
-        // if(board[fromX][fromY].type == ROOK){
-        //     aux = ROOK;
-        // }else{
-        //     aux = KNIGHT;
-        // }
-        board[toX][toY] = (struct piece) {toX,toY,board[fromX][fromY].type,board[fromX][fromY].team};
+        /*int aux = BISHOP;
+         if(board[fromX][fromY].type == ROOK){
+             aux = ROOK;
+         }else{
+             aux = KNIGHT;
+        }*/
+        struct piece aux = board[fromX][fromY];
+        board[toX][toY] = aux;
         board[fromX][fromY].type = EMPTY;
+        //board[toX][toY] = (struct piece) {toX,toY,board[fromX][fromY].type,board[fromX][fromY].team};
+        //board[fromX][fromY].type = EMPTY;
 }
 
 int isWinner(){

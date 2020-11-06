@@ -225,22 +225,11 @@ void newLineConsole(){
 
 void scrollUpConsole(){
     char* screen = screenData->framebuffer;
-    
+
     int cant = CHAR_HEIGHT*defaultFontSize; //cantidad de linea
     int consoleWidth = max_x - min_x;
-    //scrollUp(cant,16777215 );
-    
-    //int i = ((min_x + min_y*SCREEN_WIDTH)*SCREEN_BPP);
-    //int j = ((min_x + (min_y +cant)*SCREEN_WIDTH)*SCREEN_BPP);
-
     int aux1 ;
     int aux2;
-    //drawSquare(min_x, min_y, 5, 9898758);
-    //drawSquare(min_x, (min_y+cant), 5, 9898758);
-    //drawSquare(max_x*SCREEN_BPP, min_y, 5, 9898758);
-    //drawSquare(max_x, max_y, 5, 9898758);
-
-   
 
     for (int i = 0; i < (max_y-min_y) ; i++){
         for (int j = 0; j < (max_x-min_x); j++){
@@ -253,11 +242,6 @@ void scrollUpConsole(){
      }
 
     drawRectangle(min_x, (max_y), (max_x-min_x), cant, defaultBackgroundColor);
-/*
-    for (int i = (max_y-cant); i < max_y; i++)
-        for (int  j = min_x; j < max_x; j++)
-            drawPixel(j,i,defaultBackgroundColor);*/
-
     currentX = min_x; 
-    currentY -= (CHAR_HEIGHT*defaultFontSize);
+  
 }

@@ -1,21 +1,34 @@
 #include <stdc.h>
 
-void getchar(char c){
-    SystemCall05(&c,1);
-    return;
+//manejo del teclado
+int getchar(char* c){
+   int aux = 0;
+   SystemCall06(&aux);
+   if(aux){
+       SystemCall05(c,1);
+       return 1;
+   }
+    return 0;
 }
 
-unsigned int scan(char * buffer, unsigned int len) {
-    return SystemCall05(buffer, len);
-}
-
-/*unsigned int strlen(char * str){
-    int i=0;
-    while (str[i]!=0){
-        i++;
+int scan(char * buffer, int len){
+    if(len < 1){
+        return 0;
     }
-    return i;
-}*/
+    if(len == 1){
+        buffer[len-1] = '\n';
+        return 1;
+    }
+    int aux = 0;
+    SystemCall06(&aux);
+    if(aux == len){
+        SystemCall05(buffer, len -2);
+        buffer[len-1] = '\n';
+        return 1;
+    }
+    return 0;
+}
+
 //general
 //pasa un int de dos digitos a un char en buff
 void intToStr(int num, char *buff){
@@ -42,6 +55,15 @@ void intToStr(int num, char *buff){
     }
     return;
 }
+
+/*unsigned int strlen(char * str){
+    int i=0;
+    while (str[i]!=0){
+        i++;
+    }
+    return i;
+}*/
+
 
 //manejo de consola
 void consoleSize(int maxX, int minX, int maxY, int minY){

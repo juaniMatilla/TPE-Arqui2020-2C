@@ -13,7 +13,10 @@ void SystemCall03(int x, int y, unsigned char* matriz, int fontSize, int fontCol
 
 void SystemCall04(unsigned int backgroundColor); //clearDisplay
 
-unsigned int SystemCall05(char *buffer,int dim); //devulve una tecla
+void SystemCall05(char *buffer,int dim); //devulve una tecla
 
+void SystemCall06(int * target); //devulve una tecla
+
+//unsigned int SystemCall08(char *buffer,int dim); //devulve una tecla
 
 #endif 

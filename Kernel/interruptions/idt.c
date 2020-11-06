@@ -104,15 +104,13 @@ void int80Handler(uint64_t num, uint64_t *RSP) {
             clearDisplay(RSP[9]);
             break;
         case 5:
-            RSP[14] = readStandardInput(RSP[9], RSP[8]);
+            readStandardInput(RSP[9], RSP[8]);
             break;
         case 6:
-            // lee del teclado
- 
+            KBsize(RSP[9]);
             break;
         case 7:
             // lee del teclado
- 
             break;
         case 8:
             // lee del teclado

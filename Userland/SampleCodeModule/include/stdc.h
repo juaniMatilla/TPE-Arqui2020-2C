@@ -17,7 +17,7 @@ void putInt(int num);
 void Matrix16x16(int x, int y, unsigned char* matriz, int fontSize, int fontColor, int backgroundColor);
 
 //manejo del teclado
-void getchar(char c);
-unsigned int scan(char * buffer, unsigned int len);
+int getchar(char* c);
+int scan(char * buffer, int len);
 
 #endif

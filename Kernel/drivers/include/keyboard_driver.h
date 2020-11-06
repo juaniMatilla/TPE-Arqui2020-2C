@@ -5,6 +5,7 @@
 #include <lib.h>
 
 //void getKeyPressed(char* c);
-unsigned int readStandardInput(char * buffer,int dim);
+void readStandardInput(char * buffer,int dim);
 void keyboard_handler();
+void KBsize(int * target); //dim buffer teclado
 #endif
