@@ -1,6 +1,7 @@
 
 #include <stdint.h>
 #include <chess.h>
+#include <stdc.h>
 
 //PIECES
 #define EMPTY 0
@@ -50,16 +51,17 @@ struct log logs1[MAXPLAYS];
 struct log logs2[MAXPLAYS];
 
 
-//int validKnightMov(int fromX, int fromY, int toX, int toY);
+int validKnightMov(struct piece p, int x, int y);
 int validPawnMov(struct piece p, int x, int y);
 void initBoard();
 int isWinner();
-int makeMov(int fromX,int fromY,int toX,int toY);
+void makeMov(int fromX,int fromY,int toX,int toY);
 void updateView();
 int isValidMovement(int x, int y,struct piece p);
 int validPawnMov(struct piece p, int x, int y);
 int validKingMov(struct piece p, int x, int y);
 int noMoveKing(int team);
+int noMoveRook(struct piece p, int side,int team);
 int noPiecesBetween(int side,int team);
 int dangerPlace(int x,int y);
 int winner = 0, time1 = 0, time2 = 0, indexLogs1=0,indexLogs2=0;
@@ -69,66 +71,73 @@ int playchess(){
     updateView(board);
     int turn = PLAYER1;
     while(!isWinner()){
-        int fromX,fromY,toX,toY;
-        initTimer();
-        scanf("desde %d,%d hacia %d,%d\n",fromX,fromY,toX,toY);
-        if(isValidMovement(toX,toY,board[fromX][fromY])){
-            if(turn == PLAYER1){
-                logs1[indexLogs1++] = (struct log){board[fromX][fromY], toX,toY};
-            }
-            if(turn == PLAYER2){
-                logs2[indexLogs2++] = (struct log){board[fromX][fromY], toX,toY};
-            }
-            makeMov(fromX,fromY,toX,toY);
-        }
-        if(turn == PLAYER1){
-            time1 = endTimer();
-            turn = PLAYER2;
-        }else{
-            time2 = endTimer();
-            turn = PLAYER1;
-        }
+        int fromX = 0,fromY = 0,toX = 7,toY =2;
+        //board[fromX][fromY] = (struct piece){fromX,fromY,EMPTY,-1};
+        // //initTimer();
+        // //scanf("desde %d,%d hacia %d,%d\n",fromX,fromY,toX,toY);
+        // if(1){
+        //     if(turn == PLAYER1){
+        //         logs1[indexLogs1++] = (struct log){board[fromX][fromY], toX,toY};
+        //     }
+        //     if(turn == PLAYER2){
+        //         logs2[indexLogs2++] = (struct log){board[fromX][fromY], toX,toY};
+        //     }
+        makeMov(fromX,fromY,toX,toY);
+        
+
+        // }
+        // if(turn == PLAYER1){
+        //     //time1 = endTimer();
+        //     turn = PLAYER2;
+        // }else{
+        //     //time2 = endTimer();
+        //     turn = PLAYER1;
+        // }
         updateView(board);
+        // break;
     }
     return 0;
 }
-
-int makeMov(int fromX,int fromY,int toX,int toY){
-        board[toX][toY] = board[fromX][fromY];
-        
-        void *c = 0;
-        memcpy((board+fromX+fromY), c,1);
+void makeMov(int fromX,int fromY,int toX,int toY){
+        // int aux = BISHOP;
+        // if(board[fromX][fromY].type == ROOK){
+        //     aux = ROOK;
+        // }else{
+        //     aux = KNIGHT;
+        // }
+        board[toX][toY] = (struct piece) {toX,toY,board[fromX][fromY].type,board[fromX][fromY].team};
+        board[fromX][fromY].type = EMPTY;
 }
 
 int isWinner(){
-    if(time1 - time2 > 60){
-        return 3;
-    }
-    int flag = 0;
-    for(int i = 0; i <= MAX_POS;i++){
-        for(int j = 0; j <= MAX_POS;j++){
-            if(!&board[i][j] && board[i][j].type == KING && board[i][j].team == BLACK){
-                flag =1;
-            }
-        }
-    }
-    if(flag == 0){
-        winner = 1;
-        return 1;
-    }else{
-        flag = 0;
-        for(int i = 0; i <= MAX_POS;i++){
-            for(int j = 0; j <= MAX_POS;j++){
-                if(!&board[i][j] && board[i][j].type == KING && board[i][j].team == WHITE){
-                    flag =1;
-                }
-            }
-        }
-    }
-    if(flag == 0){
-        winner = 2;
-        return 2;
-    }
+    // if(time1 - time2 > 60){
+    //     return 3;
+    // }
+    // int flag = 0;
+    // for(int i = 0; i <= MAX_POS;i++){
+    //     for(int j = 0; j <= MAX_POS;j++){
+    //         if(!&board[i][j] && board[i][j].type == KING && board[i][j].team == BLACK){
+    //             flag =1;
+    //         }
+    //     }
+    // }
+    // if(flag == 0){
+    //     winner = 1;
+    //     return 1;
+    // }else{
+    //     flag = 0;
+    //     for(int i = 0; i <= MAX_POS;i++){
+    //         for(int j = 0; j <= MAX_POS;j++){
+    //             if(!&board[i][j] && board[i][j].type == KING && board[i][j].team == WHITE){
+    //                 flag =1;
+    //             }
+    //         }
+    //     }
+    // }
+    // if(flag == 0){
+    //     winner = 2;
+    //     return 2;
+    // }
     return 0;
 }
 
@@ -150,8 +159,7 @@ void updateView(){
             }else{
                 backgroundColor = BACKGROUND_COLOR_1;
             }
-            putMatrix(aux_x, aux_y, charBitmap(board[i][j].type), PIECE_SIZE, board[i][j].team, backgroundColor);
-            aux_x += PIECE_SIZE*PIECE_RESOLUTION;
+            Matrix16x16(aux_x, aux_y, charBitmap(board[i][j].type), PIECE_SIZE, board[i][j].team, backgroundColor);            aux_x += PIECE_SIZE*PIECE_RESOLUTION;
         }
         aux_x = 0;
         aux_y += PIECE_SIZE*PIECE_RESOLUTION;
@@ -201,6 +209,9 @@ void initBoard(){
     board[6][5] = (struct piece) {6,5,PAWN,BLACK};
     board[6][6] = (struct piece) {6,6,PAWN,BLACK};
     board[6][7] = (struct piece) {6,7,PAWN,BLACK};
+
+
+
 }
 
 int isValidMovement(int x, int y,struct piece p){
@@ -270,7 +281,7 @@ int validPawnMov(struct piece p, int x, int y){
 }
 
 int validKingMov(struct piece p, int x, int y){
-    int enroqueType, team;
+    int enroqueType;
     if(p.team == WHITE && y == 0 && p.x == 4 && p.y == 0 && x == 6){
         enroqueType = RIGHT;
         if(noMoveKing(WHITE) && noMoveRook(p,enroqueType,WHITE) && noPiecesBetween(enroqueType,WHITE)){
@@ -409,6 +420,7 @@ int noPiecesBetween(int side,int team){
             return 1;
         }
     }
+    return 0;
 }
 
 int dangerPlace(int x,int y){
@@ -423,4 +435,16 @@ int dangerPlace(int x,int y){
         
     }
     return 0;
+}
+
+int validKnightMov(struct piece p, int x, int y){
+    return ((p.x+2 == x && p.y+1 == y )||
+            (p.x-2 == x && p.y+1 == y ) ||
+            (p.x-2 == x && p.y-1 == y) ||
+            (p.x+2 == x && p.y-1 == y) ||
+            (p.y+2 == y && p.x+1 == x) ||
+            (p.y-2 == y && p.x+1 == x) ||
+            (p.y-2 == y && p.x-1 == x) ||
+            (p.y+2 == y && p.x-1 == x))&& 
+            (&board[x][y] == 0|| p.team != board[x][y].team);
 }

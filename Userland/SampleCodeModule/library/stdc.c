@@ -98,5 +98,3 @@ void putInt(int num){
 void putchar(char c){
     SystemCall01(c);
 }
-
-
