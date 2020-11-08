@@ -44,7 +44,7 @@ void intToStr(int num, char *buff){
         num = num / 10;
     }
     buff[i] = '\0';
-
+    i--;
     char aux;
     while(j<i){
         aux = buff[i];
