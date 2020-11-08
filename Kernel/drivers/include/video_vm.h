@@ -18,6 +18,7 @@ void drawFont16x16(int x, int y, unsigned char* matriz, int fontSize, int fontCo
 void setConsoleSize(int maxX, int minX, int maxY, int minY);
 void writeConsole(const char* String);
 void writeCharConsole(char character);
+void backspace();
 void newLineConsole();
 void scrollUpConsole();
 

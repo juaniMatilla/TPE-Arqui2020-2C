@@ -23,14 +23,11 @@ static void * const sampleDataModuleAddress = (void*)0x500000;
 
 typedef int (*EntryPoint)();
 
-
-void clearBSS(void * bssAddress, uint64_t bssSize)
-{
+void clearBSS(void * bssAddress, uint64_t bssSize){
 	memset(bssAddress, 0, bssSize);
 }
 
-void * getStackBase()
-{
+void * getStackBase(){
 	return (void*)(
 		(uint64_t)&endOfKernel
 		+ PageSize * 8				//The size of the stack itself, 32KiB
@@ -38,8 +35,7 @@ void * getStackBase()
 	);
 }
 
-void * initializeKernelBinary()
-{
+void * initializeKernelBinary(){
 	char buffer[10];
 
 	ncPrint("[x64BareBones]");
@@ -85,15 +81,12 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
-int main()
-{	
+int main(){	
 
 	load_idt();
 	init_VM_Driver();
-	//clearDisplay(16777215);
-
+	//clearDisplay(0);
 	
-
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -112,31 +105,6 @@ int main()
 	ncNewline();
 
 	ncPrint("[Finished]");
-	
-	/*
-	char * seconds = getDataTime();
-	//ncPrint(seconds);
-	 //ncPrintChar(currentTime());
-	for (int i = 0; seconds[i] != '\n'; i++)
-	{
-		ncPrintChar(seconds[i]);
-	}*/
-
-	//userProgram();
-
-	/*drawRectangle(50, 85, 80, 40, 16763708);
-
-	const char* String = "hola como  holaaa ";
-	
-	drawString(100, 100,String, 2, 16777215, 0 );
-	
-	for (int i = 0; i < 100000000; i++);
-
-	scrollUp(50, 0);
-	
-	drawString(100, 100,String, 2, 16777215, 7215 );
-	
-	//clearDisplay(0);*/
 	
 	return 0;
 }

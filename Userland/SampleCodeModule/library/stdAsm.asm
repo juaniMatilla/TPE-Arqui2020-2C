@@ -9,6 +9,8 @@
     GLOBAL SystemCall06
     GLOBAL SystemCall07
     GLOBAL SystemCall08
+    GLOBAL SystemCall09
+    GLOBAL SystemCall10
 
 section .text
 
@@ -31,10 +33,15 @@ SystemCall05:       ;getKeyPressed
     SystemCall 5
 SystemCall06:       ;dim buffer teclado
     SystemCall 6
-SystemCall07:       ;nada
+SystemCall07:       ;backspace
     SystemCall 7
 SystemCall08:       ;fecha y hora
     SystemCall 8
+SystemCall09:       ;guarda los registros
+    int 81h
+    ret
+SystemCall10:       ;getFromAdress
+    SystemCall 10
 
 
 

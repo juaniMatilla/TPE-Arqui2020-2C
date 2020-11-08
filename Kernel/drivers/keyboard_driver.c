@@ -10,13 +10,6 @@
 #define RIGHT_SHIFT_PRESSED 54
 #define RIGHT_SHIFT_RELEASED 182
 #define BLOQMAYUS 58
-#define ENTER 28
-#define ESC_SCANCODE 0x81
-#define ESC_ASCII 27
-#define CAPTURE_FLAGS 2
-#define ALT_SCAN_CODE 0xb8
-//entre codes de pressed y released hay un defasaje de 128
-
 
 #define INPUT_BUFFER 255 //Cant max de caracteres en buffer de input
 
@@ -29,8 +22,6 @@ static unsigned int olderLetter = 0;
 static int pressingShift =0;
 static int bloqMayus = 0; //boolean
 static int pressingCtrl =0;
-
-extern uint8_t getKeyScanCode();
 
 
 static char asccode[58][2] ={
