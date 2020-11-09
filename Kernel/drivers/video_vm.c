@@ -13,10 +13,10 @@ unsigned int SCREEN_BPP= 3;  //los bytes por cada pixel
 
 //color 0 -> negro, 16777215 -> blanco
 //consola
- int max_x;
- int min_x;
- int max_y;
- int min_y;
+ static int max_x;
+ static int min_x;
+ static int max_y;
+ static int min_y;
 
 int currentX;
 int currentY;

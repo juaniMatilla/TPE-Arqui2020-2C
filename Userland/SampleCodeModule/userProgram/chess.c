@@ -69,7 +69,7 @@ int validKingMov(struct piece p,int x,int y);
 void initBoard();
 int isWinner();
 void makeMov(int fromX,int fromY,int toX,int toY);
-void updateView();
+// void updateView();
 int isValidMovement(int x, int y,struct piece p);
 int validPawnMov(struct piece p, int x, int y);
 int validKingMov(struct piece p, int x, int y);
@@ -77,36 +77,47 @@ int noMoveKing(int team);
 int noMoveRook(struct piece p, int side);
 int noPiecesBetween(int side,int team);
 int dangerPlace(int x,int y,int team);
-int winner = 0, time1 = 0, time2 = 0, indexLogs1=0,indexLogs2=0;
+int winner = 0, time1 = 0, time2 = 0, indexLogs1=0,indexLogs2=0,rotation=0;
 
 int playchess(){
     initBoard();
-
-    updateView(board);
     consoleSize(1016, 600, 500, 10);
+    updateView();
+   
 
     int turn = PLAYER1;
-    print("Ingrese jugada con el formato:\n letraNum->letraNum\n");
+    print("Ingrese jugada con el formato\n: letraNum->letraNum\n");
+    print("Oprima 'r' para girar el tablero\n");
     print("Empieza el equipo blanco\n");
     char buff;
     while(!isWinner()){
-        char *playString;
+        char playString[100];
         int i =0;
         print("$ ");
-        while(buff != '\n'){
+       while(buff != '\n'){
             if(getchar(&buff) == 1){
-                putchar(buff);
-                playString[i++] = buff;
+                if(buff == 'r'){
+                    if(rotation == 1){
+                        updateView();
+                        rotation =0;
+                    }else{
+                        rotate();
+                        rotation = 1;
+                    }
+                }else{ 
+                    putchar(buff);
+                    playString[i++] = buff;
+                }
             }
             if(buff == GOBACK){
                 return 0;
             }
             if(buff == PAUSE){
-                clearDisplay(0);
-                StartShell();
-                consoleSize(1016, 600, 500, 10);
+                // clearDisplay(0);
+                // StartShell();
+                // consoleSize(1016, 600, 500, 10);
             }
-        }
+       }
         playString[i] = 0;
         buff = 0;
 
@@ -118,8 +129,8 @@ int playchess(){
         }else if(turn == PLAYER2 && board[fromX][fromY].team == WHITE){
             print("Es el turno de las negras\n");
         }else{
-
-            //char* time = getTime();
+            // int day = getDay();
+            // int time = getTime();
             if(isValidMovement(toX,toY,board[fromX][fromY])){
                 if(turn == PLAYER1){
                     logs1[indexLogs1++] = (struct log){board[fromX][fromY], toX,toY};
@@ -130,15 +141,29 @@ int playchess(){
                 makeMov(fromX,fromY,toX,toY);
 
                 if(turn == PLAYER1){
-                    //time1 += diffTime(time);
-                    print("Tiempo blancas:  %d",time1);
+                    // if(getDay() == day){
+                    //     time1 += getTime()- time;
+                    // }else{
+                    //     time1 += getTime() + (24*60*60)- time;
+                    // }
+                    
+                    print("Tiempo blancas:  %d\n",time1);
                     turn = PLAYER2;
                 }else{
-                    //time2 += diffTime(time);
-                    print("Tiempo negras:  %d",time2);
+                    // if(getDay() == day){
+                    //     time2 += getTime()- time;
+                    // }else{
+                    //     time2 += getTime() + (24*60*60)- time;
+                    // }
+                    
+                    print("Tiempo negras:  %d\n",time2);
                     turn = PLAYER1;
                 }
-                updateView(board);
+                if(rotation == 0){
+                    updateView();
+                }else{
+                    rotate();
+                }
             }else{
                 print("Movimiento Invalido\n");
             }
@@ -151,9 +176,37 @@ int playchess(){
     }else{
         print("Diferncia entre tiempo1 y tiempo2 mayor a 60\n");
     }
-    return 0;
+     return 0;
 }
 
+void rotate(){
+    int backgroundColor = BACKGROUND_COLOR_2;
+    int aux_x = 0;
+    int aux_y = 0;
+
+    for (int i = 0; i < MAX_POS+1; i++){
+        for (int j = 0; j < MAX_POS+1; j++){
+            if(i%2 == 0){//si i es par
+                if(j%2 == 0){
+                    backgroundColor = BACKGROUND_COLOR_1;
+                }else{
+                    backgroundColor = BACKGROUND_COLOR_2;
+                }
+            }else if(j%2 == 0){
+                backgroundColor = BACKGROUND_COLOR_2;
+            }else{
+                backgroundColor = BACKGROUND_COLOR_1;
+            }
+            Matrix16x16(aux_x, aux_y, charBitmap(board[j][i].type), PIECE_SIZE, board[j][i].team, backgroundColor);            aux_x += PIECE_SIZE*PIECE_RESOLUTION;
+        }
+        aux_x = 0;
+        aux_y += PIECE_SIZE*PIECE_RESOLUTION;
+    }
+}
+
+// int getTime(){
+//     return getSeconds()+getMinutes()*60+getHours()*60*60;
+// }
 
 void makeMov(int fromX,int fromY,int toX,int toY){
         struct piece aux = board[fromX][fromY];

@@ -6,7 +6,8 @@ int strcmp(char *str1,char *str2);
 int strToInt(char a[]);
 void StartShell(){
   //playchess();
-  consoleSize(1016, 600, 500, 10);
+  consoleSize(1016, 0, 768, 0);
+  clearDisplay(0);
   print("Modulos:\n");
   info();
   print("¿Que modulo desea correr?\n");
@@ -69,6 +70,7 @@ void execute(char *command){
   }else if(strcmp(command,"chess") == 0){
     clearDisplay(0);
     playchess();
+    clearDisplay(0);
     consoleSize(1024, 0, 768, 0);
   }else{
     char *str = "printMem ";
