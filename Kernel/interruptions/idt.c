@@ -11,7 +11,7 @@ static void setup_IDT_entry (int index, uint64_t offset);
 void load_idt() {
 
     setup_IDT_entry (0x00, (uint64_t)&_ex00Handler);
-    setup_IDT_entry (0x01, (uint64_t)&_ex01Handler);
+    setup_IDT_entry (0x06, (uint64_t)&_ex01Handler);
 
     setup_IDT_entry (0x20, (uint64_t) &_irq00Handler); //timer tick
     setup_IDT_entry (0x21, (uint64_t) &_irq01Handler); //keyboard
@@ -36,7 +36,10 @@ void exDispatcher(uint64_t num, uint64_t *RIP, uint64_t *RSP){
 		    break;
 	}
 	printRegister( saveRegisters(RSP, RIP) );
-
+    
+    for (int i = 0; i < 1000000000; i++); //delay para que se vea el mensaje
+    
+    RIP[0] = 0x400000;
 }
 
 void irqDispatcher(uint64_t irq) {

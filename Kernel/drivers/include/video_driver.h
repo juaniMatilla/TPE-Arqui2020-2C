@@ -1,5 +1,5 @@
-#ifndef VIDEO_VM_H
-#define VIDEO_VM_H
+#ifndef VIDEO_DRIVER_H
+#define VIDEO_DRIVER_H
 
 #include <stdint.h>
 #include "font.h"

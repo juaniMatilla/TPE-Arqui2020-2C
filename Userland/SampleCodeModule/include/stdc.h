@@ -33,4 +33,13 @@ void StringDataTime(char* buffer);//pasar un buffer de dim 17
 void getRegistersValues();
 void getFromAdress(uint8_t* buffer, int cantBytes, uint64_t address);
 
+//otros
+int strToInt(char a[]);
+void intToStr(int num, char *buff);
+void hexToStr(int num, char *buff);
+unsigned int strlen(char * str);
+void numTwoDigitsToStr(int num, char* buff);
+void strUnion(char* buff, char* str, int desde, int dim);
+int strcmp(char *str1,char *str2);
+
 #endif

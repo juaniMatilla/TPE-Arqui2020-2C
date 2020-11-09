@@ -15,14 +15,14 @@ void SystemCall04(unsigned int backgroundColor); //clearDisplay
 
 void SystemCall05(char *buffer,int dim); //devulve una tecla
 
-void SystemCall06(int * target); //devulve una tecla
+void SystemCall06(int * target); //deculve el tamaño del buffer del teclado
+ 
+void SystemCall07();  //hace un backspace
 
-void SystemCall07();
-
-void SystemCall08(char mode,int* dim); //devulve los datos de lafceha o hora selecionados
+void SystemCall08(char mode,int* dim); //devulve los datos de la feha o hora selecionados
 
 uint64_t* SystemCall09(); //devulve una estructura con los registros
 
-void SystemCall10(uint8_t *buffer, uint64_t address); //velueve 32bytes de 
+void SystemCall10(uint8_t *buffer, uint64_t address); //devuelve 1byte de la dirrecion de memoria
 
 #endif 

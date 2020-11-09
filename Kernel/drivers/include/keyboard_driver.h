@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <lib.h>
 
-//void getKeyPressed(char* c);
 void readStandardInput(char * buffer,int dim);
 void keyboard_handler();
 void KBsize(int * target); //dim buffer teclado
