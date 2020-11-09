@@ -1,27 +1,38 @@
 #include "shell.h"
+
+extern void invalid_opcode();
+
 void info();
-void printMem(char* c);
+void printMem(int c);
 void execute(char *command);
 int strcmp(char *str1,char *str2);
 int strToInt(char a[]);
+
+
 void StartShell(){
-  //playchess();
   consoleSize(1016, 0, 768, 0);
   clearDisplay(0);
+
   print("Modulos:\n");
   info();
   print("¿Que modulo desea correr?\n");
-  char *command;
+  char command[50];
   int i;
   char buff;
   while(1){ 
     i=0;
     print("$ ");
     while(buff != '\n'){
-        if(getchar(&buff) == 1){
-            putchar(buff);
-            command[i++] = buff;
-        }
+         if(getchar(&buff) == 1){
+            if(buff == '\b'){
+              putchar(buff);
+              if(i>0)
+                i--;
+            }else{
+              putchar(buff);
+              command[i++] = buff;  
+            }
+          }
     }
     command[i] = 0;
     buff = 0;
@@ -34,91 +45,69 @@ void info(){
     print(" inforeg: Muestra el valor de los registros\n");
     print(" date: Muestra el la hora y fecha actual\n");
     print(" chess: Abre un juego de ajedrez\n");
-    print(" excpetions: Permite ver mediante operaciones matematicas que las excepciones funcionan correctamente\n");
+    print(" excpetions0: excepción de divivion por cero \n");
+    print(" excpetions1: excepción de código de operación inválido \n");
     print(" printMem (puntero): Dado un puntero imprime el valor de los 32 bytes siguientes\n");
     print(" help: Muestra los comandos disponibles\n");
-
 }
 
-
-void printMem(char* c){
-    for(int i = 0;i < 4;i++){
-      print("%d\n",c++);
+void printMem(int c){
+    uint8_t buffer[32];
+    getFromAdress(buffer[0], 32, c);
+    for (int i = 0; i < 32; i++){
+      char aux[2];
+      hexToStr(buffer[0], aux[0]);
+      putStirng(aux[0]);
     }
-}
-
-void date(){
-    //print(getDate());
-}
-
-void inforeg(){
-    //int *registers = getRegisters();
+    
 }
 
 void execute(char *command){
   if(strcmp(command,"help") == 0){
     info();
-  }else if(strcmp(command,"exceptions") == 0){
-     print("excep\n");
-    //exceptions();
+  }else if(strcmp(command,"exception0") == 0){
+    consoleSize(1016, 0, 768, 0);
+    clearDisplay(0);
+    divByZero();
+  }else if(strcmp(command,"exception6") == 0){
+     consoleSize(1016, 0, 768, 0);
+     clearDisplay(0);
+     invalid_opcode();
   }else if(strcmp(command,"inforeg") == 0){
-     print("inforeg\n");
-    //inforeg();
+    print("inforeg:\n");
+    getRegistersValues();
+    print("\n");
   }else if(strcmp(command,"date") == 0){
-     print("date\n");
-    //date();
+     print("date : ");
+     char buff[17];
+     StringDataTime(buff[0]);
+     putStirng(buff[0]);
   }else if(strcmp(command,"chess") == 0){
     clearDisplay(0);
     playchess();
     clearDisplay(0);
     consoleSize(1024, 0, 768, 0);
-  }else{
-    char *str = "printMem ";
-    int i;
-    for(i = 0;str[i];i++){
-        if(command[i] != str[i]){
-            print("Comando no existente\n");
-            return;
-        }
+  }else if(strcmp(command,"printMen") == 0){
+    print("ingrese la direcion:\n");
+    char aux[20];
+    int i = 0;
+    while(aux != '\n'){
+         if(getchar(&aux) == 1){
+            if(aux == '\b'){
+              putchar(aux);
+              if(i>0)
+                i--;
+            }else{
+              putchar(aux);
+              aux[i++] = aux;  
+            }
+          }
     }
-    printMem(strToInt(command[i]));
+    printMem(strToInt(aux[i]));
   }
 }
 
-int strcmp(char *str1,char *str2){
-    for(int i=0;str1[i]&&str2[i];i++){
-        if(str1[i] != str2[i]){
-            return 1;
-        }
-    }
-    return 0;
+void divByZero(){
+  int num = 10/0;
 }
 
-
-  
-int strToInt(char a[]) {
-  int c, sign, offset, n;
-
-  if (a[0] == '-') {  // Handle negative integers
-    sign = -1;
-  }
-
-  if (sign == -1) {  // Set starting position to convert
-    offset = 1;
-  }
-  else {
-    offset = 0;
-  }
-
-  n = 0;
-
-  for (c = offset; a[c] != '\0'; c++) {
-    n = n * 10 + a[c] - '0';
-  }
-
-  if (sign == -1) {
-    n = -n;
-  }
-
-  return n;
-}

@@ -1,5 +1,5 @@
 
-#include "video_vm.h"
+#include "video_driver.h"
 //#include "include/console.h"
 
 //se activa desde el bootloder > prue64 > src > sysvar.asm. la costante cfg_vesa en 1 
@@ -13,13 +13,12 @@ unsigned int SCREEN_BPP= 3;  //los bytes por cada pixel
 
 //color 0 -> negro, 16777215 -> blanco
 //consola
- static int max_x;
- static int min_x;
- static int max_y;
- static int min_y;
-
-int currentX;
-int currentY;
+static int max_x;
+static int min_x;
+static int max_y;
+static int min_y;
+static int currentX;
+static int currentY;
 int defaultFontColor = 16777215; //blanco
 int defaultBackgroundColor = 0; //negro
 int defaultFontSize = 1;
@@ -40,8 +39,8 @@ struct vbe_mode_info_structure{
     uint8_t w_char;         // unused...
     uint8_t y_char;         // ...
     uint8_t planes;
-    uint8_t bpp;   // bits per pixel in this mode
-    uint8_t banks; // deprecated; total number of banks in this mode
+    uint8_t bpp;            // bits per pixel in this mode
+    uint8_t banks;          // deprecated; total number of banks in this mode
     uint8_t memory_model;
     uint8_t bank_size; // deprecated; size of a bank, almost always 64 KB but may be 16 KB...
     uint8_t image_pages;
@@ -71,6 +70,10 @@ void init_VM_Driver(){
     SCREEN_BPP = screenData->bpp / 8;
     currentX = 0;
     currentY = 0;
+    max_x = SCREEN_WIDTH;
+    min_x = 0;
+    max_y = SCREEN_HEIGHT;
+    min_y = 0;
 }
 
 void drawPixel(unsigned int x, unsigned int y, int color){
@@ -100,7 +103,7 @@ int drawChar(int x, int y, char character, int fontSize, int fontColor, int back
 
     for (int i = 0; i < CHAR_HEIGHT; i++){
         for (int  j = 0; j < CHAR_WIDTH; j++){
-            bitIsPresent = (1 << (CHAR_WIDTH - j)) & letter[i];  //toDraw[i]; //no se que hace buscar
+            bitIsPresent = (1 << (CHAR_WIDTH - j)) & letter[i];  //no se que hace buscar
             
             if(bitIsPresent)
                 drawSquare(aux_x, aux_y, fontSize, fontColor);
@@ -180,10 +183,10 @@ void clearDisplay(unsigned int backgroundColor){
 void setConsoleSize(int maxX, int minX, int maxY, int minY){
     max_x = maxX;
     min_x = minX;
-    currentX = minX;
+    currentX = minX+1;
     max_y = maxY;
     min_y = minY;
-    currentY = minY;
+    currentY = minY+1;
 }
 
 void writeConsole(const char* String){
@@ -211,6 +214,7 @@ void writeCharConsole(char character){
         }
     }
     currentX += drawChar(currentX, currentY, character, defaultFontSize, defaultFontColor, defaultBackgroundColor);
+    
 }
 
 void backspace(){

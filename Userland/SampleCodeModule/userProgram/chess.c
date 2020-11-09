@@ -71,8 +71,7 @@ int winner = 0, time1 = 0, time2 = 0, indexLogs1=0,indexLogs2=0,rotation=0;
 int playchess(){
     
     initBoard();
-
-    consoleSize(1016, 600, 500, 10);
+    consoleSize(1016, 620, 500, 10);
     updateView();
    
 
@@ -122,6 +121,7 @@ int playchess(){
         }else{
             // int day = getDay();
             // int time = getTime();
+
             if(isValidMovement(toX,toY,board[fromX][fromY])){
                 if(turn == PLAYER1){
                     logs1[indexLogs1++] = (struct log){board[fromX][fromY], toX,toY};

@@ -18,6 +18,8 @@ uint64_t* saveRegisters(uint64_t *RSP, uint64_t *RIP){
 }
 
 void printRegister(uint64_t* aux){
+    //setConsoleSize(1016, 0, 768, 0);
+    //clearDisplay(0);
     char* RegistersName[] = {"R15","R14","R13","R12","R11","R10","R9","R8",
     "RSI","RDI","RBP","RDX","RCX","RBX","RAX","RIP"};
     writeConsole("Registers: \n");

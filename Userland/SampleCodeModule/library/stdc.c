@@ -1,6 +1,33 @@
 #include <stdc.h>
 //general
 //pasa un int de dos digitos a un char en buff
+int strToInt(char a[]) {
+  int c, sign, offset, n;
+
+  if (a[0] == '-') {  // Handle negative integers
+    sign = -1;
+  }
+
+  if (sign == -1) {  // Set starting position to convert
+    offset = 1;
+  }
+  else {
+    offset = 0;
+  }
+
+  n = 0;
+
+  for (c = offset; a[c] != '\0'; c++) {
+    n = n * 10 + a[c] - '0';
+  }
+
+  if (sign == -1) {
+    n = -n;
+  }
+
+  return n;
+}
+
 void intToStr(int num, char *buff){
     if (num == 0){
         buff[0] = '0';
@@ -79,6 +106,15 @@ void strUnion(char* buff, char* str, int desde, int dim){
         buff[i+desde] = str[i];
     }
     return;
+}
+
+int strcmp(char *str1,char *str2){
+    for(int i=0;str1[i]&&str2[i];i++){
+        if(str1[i] != str2[i]){
+            return 1;
+        }
+    }
+    return 0;
 }
 
 //manejo del teclado////////////////////////////////////////////////////////
