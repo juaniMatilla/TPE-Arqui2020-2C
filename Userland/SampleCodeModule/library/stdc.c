@@ -160,14 +160,7 @@ int getMinutes() {
     SystemCall08(1,&result);
     return result;
 }
-int strcmp(char *str1,char *str2){
-    for(int i=0;str1[i]&&str2[i];i++){
-        if(str1[i] != str2[i]){
-            return 1;
-        }
-    }
-    return 0;
-}
+
 
 
 int getHours() {

@@ -6,7 +6,7 @@
 
 #include <text_driver.h>
 #include <timerRTC.h>
-#include "video_vm.h"
+#include "video_driver.h"
 #include "idt.h"
 
 extern uint8_t text;

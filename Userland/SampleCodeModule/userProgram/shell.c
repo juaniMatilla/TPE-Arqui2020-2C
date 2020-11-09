@@ -3,10 +3,8 @@
 extern void invalid_opcode();
 
 void info();
-void printMem(char* c);
+void printMem(int c);
 int execute(char *command);
-int strcmp(char *str1,char *str2);
-int strToInt(char a[]);
 int fromChess = 0;
 int StartShell(int chessFlag){
   fromChess = chessFlag;

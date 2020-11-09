@@ -6,7 +6,7 @@
 #include <lib.h>
 #include <stdarg.h> //permite arumentos variables
 
-#include <video_vm.h>
+#include <video_driver.h>
 #include <keyboard_driver.h>
 #include <timerRTC.h>
 #include <memory_driver.h>
