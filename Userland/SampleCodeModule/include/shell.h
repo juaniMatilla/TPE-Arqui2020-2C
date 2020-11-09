@@ -5,6 +5,6 @@
 #include <stdint.h>
 #include <chess.h>
 
-void StartShell();
+int StartShell(int fromChess);
 
 #endif

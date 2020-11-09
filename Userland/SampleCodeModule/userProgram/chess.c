@@ -58,7 +58,7 @@ int validKingMov(struct piece p,int x,int y);
 void initBoard();
 int isWinner();
 void makeMov(int fromX,int fromY,int toX,int toY);
-// void updateView();
+void updateView();
 int isValidMovement(int x, int y,struct piece p);
 int validPawnMov(struct piece p, int x, int y);
 int validKingMov(struct piece p, int x, int y);
@@ -66,24 +66,29 @@ int noMoveKing(int team);
 int noMoveRook(struct piece p, int side);
 int noPiecesBetween(int side,int team);
 int dangerPlace(int x,int y,int team);
+int getTime();
 int winner = 0, time1 = 0, time2 = 0, indexLogs1=0,indexLogs2=0,rotation=0;
 
 int playchess(){
     
     initBoard();
 
-    consoleSize(1016, 600, 500, 10);
+    consoleSize(1016, 620, 500, 10);
     updateView();
    
 
     int turn = PLAYER1;
-    print("Ingrese jugada con el formato\n: letraNum->letraNum\n");
+    print("Ingrese jugada con el formato\n: letraNum->letraNum (ej: 'B1->C1')\n");
     print("Oprima 'r' para girar el tablero\n");
+    print("Oprima '.' para pausar el juego\n");
+    print("Escriba 'quit' y aprete enter en la consola para terminar el juego\n");
     print("Empieza el equipo blanco\n");
     char buff;
     while(!isWinner()){
         char playString[100];
         int i =0;
+        int day = getDay();
+        int time = getTime();
         print("$ ");
        while(buff != '\n'){
             if(getchar(&buff) == 1){
@@ -95,7 +100,27 @@ int playchess(){
                         rotate();
                         rotation = 1;
                     }
-                }else{ 
+                }else if(buff == '.'){
+                    clearDisplay(0);
+                    StartShell(1);
+                    clearDisplay(0);
+                    consoleSize(1016, 620, 500, 10);
+                    print("Ingrese jugada con el formato\n: letraNum->letraNum\n");
+                    print("Oprima 'r' para girar el tablero\n");
+                    print("Oprima '.' para pausar el juego\n");
+                    print("Escriba 'quit' y aprete enter en la consola para terminar el juego\n");
+                    print("$ ");
+                    if(rotation == 0){
+                        updateView();
+                    }else{
+                        rotate();
+                    }
+                    continue;
+                }else if(buff == '\b'){
+                    putchar(buff);
+                    if(i>0)
+                        i--;
+                }else{
                     putchar(buff);
                     playString[i++] = buff;
                 }
@@ -111,7 +136,9 @@ int playchess(){
        }
         playString[i] = 0;
         buff = 0;
-
+        if(strcmp(playString,"quit") == 0){
+            return 0;
+        }
         char fromX = playString[0] -'A',fromY = playString[1]-'1',toX = playString[4]-'A' ,toY = playString[5]-'1' ;
         if(fromX < 0 || fromX >7||fromY < 0 || fromY >7||toX <0 || toX >7||toY < 0 || toY >7){
             print("Mal formato\n");
@@ -120,8 +147,6 @@ int playchess(){
         }else if(turn == PLAYER2 && board[fromX][fromY].team == WHITE){
             print("Es el turno de las negras\n");
         }else{
-            // int day = getDay();
-            // int time = getTime();
             if(isValidMovement(toX,toY,board[fromX][fromY])){
                 if(turn == PLAYER1){
                     logs1[indexLogs1++] = (struct log){board[fromX][fromY], toX,toY};
@@ -132,20 +157,20 @@ int playchess(){
                 makeMov(fromX,fromY,toX,toY);
 
                 if(turn == PLAYER1){
-                    // if(getDay() == day){
-                    //     time1 += getTime()- time;
-                    // }else{
-                    //     time1 += getTime() + (24*60*60)- time;
-                    // }
+                    if(getDay() == day){
+                        time1 += getTime()- time;
+                    }else{
+                        time1 += getTime() + (24*60*60)- time;
+                    }
                     
                     print("Tiempo blancas:  %d\n",time1);
                     turn = PLAYER2;
                 }else{
-                    // if(getDay() == day){
-                    //     time2 += getTime()- time;
-                    // }else{
-                    //     time2 += getTime() + (24*60*60)- time;
-                    // }
+                    if(getDay() == day){
+                        time2 += getTime()- time;
+                    }else{
+                        time2 += getTime() + (24*60*60)- time;
+                    }
                     
                     print("Tiempo negras:  %d\n",time2);
                     turn = PLAYER1;
@@ -170,8 +195,10 @@ int playchess(){
      return 0;
 }
 
+
+
 void rotate(){
-    int backgroundColor = BACKGROUND_COLOR_2;
+   int backgroundColor = BACKGROUND_COLOR_2;
     int aux_x = 0;
     int aux_y = 0;
 
@@ -185,19 +212,22 @@ void rotate(){
                 }
             }else if(j%2 == 0){
                 backgroundColor = BACKGROUND_COLOR_2;
-            }else{
+            }else
                 backgroundColor = BACKGROUND_COLOR_1;
+            if(i == MAX_POS || j ==  MAX_POS){
+                backgroundColor = BLACK;    
             }
-            Matrix16x16(aux_x, aux_y, charBitmap(board[j][i].type), PIECE_SIZE, board[j][i].team, backgroundColor);            aux_x += PIECE_SIZE*PIECE_RESOLUTION;
+            Matrix16x16(aux_x, aux_y, charBitmap(board[j][i].type), PIECE_SIZE, board[j][i].team, backgroundColor);           
+            aux_x += PIECE_SIZE*(PIECE_RESOLUTION+1);
         }
         aux_x = 0;
-        aux_y += PIECE_SIZE*PIECE_RESOLUTION;
+        aux_y += PIECE_SIZE*(PIECE_RESOLUTION);
     }
 }
 
-// int getTime(){
-//     return getSeconds()+getMinutes()*60+getHours()*60*60;
-// }
+int getTime(){
+    return getSeconds()+getMinutes()*60;
+}
 
 void makeMov(int fromX,int fromY,int toX,int toY){
         struct piece aux = board[fromX][fromY];
@@ -209,7 +239,7 @@ void makeMov(int fromX,int fromY,int toX,int toY){
 }
 
 int isWinner(){
-    if(time1 - time2 > 60){
+    if(time1 - time2 > 60 || time2 - time1 > 60){
         return 3;
     }
     int flag = 0;
@@ -368,7 +398,6 @@ int validKingMov(struct piece p, int x, int y){
         if(noMoveKing(WHITE) && noMoveRook(p,enroqueType) && noPiecesBetween(enroqueType,WHITE)){
             for(int i = p.x ; i <= x;i++){
                 if(dangerPlace(i,y,p.team)){
-                    print("falla en i=%d,y=%d\n",i,y);
                     return 0;
                 }
             }
@@ -383,7 +412,6 @@ int validKingMov(struct piece p, int x, int y){
         if(noMoveKing(WHITE) && noMoveRook(p,enroqueType) && noPiecesBetween(enroqueType,WHITE)){
             for(int i = p.x ; i >= x;i--){
                 if(dangerPlace(i,y,p.team)){
-                    print("falla en i=%d,y=%dAAA\n",i,y);
                     return 0;
                 }
             }
@@ -398,7 +426,6 @@ int validKingMov(struct piece p, int x, int y){
         if(noMoveKing(BLACK) && noMoveRook(p,enroqueType) && noPiecesBetween(enroqueType,BLACK)){
             for(int i = p.x ; i <= x;i++){
                 if(dangerPlace(i,y,p.team)){
-                    print("falla en i=%d,y=%dAAA\n",i,y);
                     return 0;
                 }
             }
@@ -413,7 +440,6 @@ int validKingMov(struct piece p, int x, int y){
         if(noMoveKing(BLACK) && noMoveRook(p,enroqueType) && noPiecesBetween(enroqueType,BLACK)){
             for(int i = p.x ; i >= x;i--){
                 if(dangerPlace(i,y,p.team)){
-                    print("falla en i=%d,y=%dAAA\n",i,y);
                     return 0;
                 }
             }
@@ -445,14 +471,12 @@ int noMoveKing(int team){
             if(logs1[i].p.type == KING)
                 return 0;
         }
-        print("No move king\n");
         return 1;
     }else{
         for(int i = 0;i<=indexLogs2;i++){
             if(logs2[i].p.type == KING)
                 return 0;
         }
-        print("No move king\n");
         return 1;
     }
     return 0;
@@ -465,28 +489,24 @@ int noMoveRook(struct piece p, int side){
             if(logs1[i].p.type == ROOK  && logs1[i].p.y == 7)
                 return 0;
         }
-        print("No move rook\n");
         return 1;
     }else if(team == WHITE && side == LEFT){
         for(int i = 0;i<=indexLogs1;i++){
             if(logs1[i].p.type == ROOK  && logs1[i].p.y == 0)
                 return 0;
         }
-        print("No move rook\n");
         return 1;
     }else if(team == BLACK && side == LEFT){
         for(int i = 0;i<=indexLogs2;i++){
             if(logs2[i].p.type == ROOK  && logs2[i].p.y == 0)
                 return 0;
         }
-        print("No move rook\n");
         return 1;
     }else{
         for(int i = 0;i<=indexLogs2;i++){
             if(logs2[i].p.type == ROOK  && logs2[i].p.y == 7)
                 return 0;
         }
-        print("No move rook\n");
         return 1;
     }
     return 0;
@@ -496,48 +516,44 @@ int noPiecesBetween(int side,int team){
     if(side == LEFT && team == WHITE){
         if(board[0][0].type == ROOK && board[0][4].type == KING){
             for (int i = 1; i <= 3; i++){
-                print("board[%d][0].type:%d\n",i,board[i][0].type);
                 if(board[0][i].type != EMPTY){
                     return 0;
                 }
             }
-            print("No pieces between\n");
             return 1;
         }
         return 0;
     }else if(side == RIGHT && team == WHITE){
         if(board[0][7].type == ROOK && board[0][4].type == KING){
             for (int i = 5; i <= 6; i++){
-                print("board[%d][0].type:%d\n",i,board[i][0].type);
                 if(board[0][i].type != EMPTY){
                     return 0;
                 }
             }
-            print("No pieces between\n");
             return 1;
         }
         return 0;
     }else  if(side == LEFT && team == BLACK){
         if(board[7][0].type == ROOK && board[7][4].type == KING){
             for (int i = 1; i <= 3; i++){
-                print("board[%d][7].type:%d\n",i,board[i][0].type);
+                
                 if(board[7][i].type != EMPTY){
                     return 0;
                 }
             }
-            print("No pieces between\n");
+           
             return 1;
         }
         return 0;
     }else{
         if(board[7][7].type == ROOK && board[7][4].type == KING){
             for (int i = 5; i <= 6; i++){
-                print("board[%d][7].type:%d\n",i,board[i][0].type);
+                
                 if(board[7][i].type != EMPTY){
                     return 0;
                 }
             }
-            print("No pieces between\n");
+            
             return 1;
         }
         return 0;
@@ -572,7 +588,7 @@ int validRookMov(struct piece p, int x, int y){
     if(p.x == x){
         if(p.y > y){
             for(int j = p.y-1; j > y;j--){
-                print("%d,%d\n",x,j);
+                
                 if(board[x][j].type != EMPTY){
                     return 0;
                 }
@@ -580,7 +596,7 @@ int validRookMov(struct piece p, int x, int y){
             return  board[x][y].type == EMPTY||board[x][y].team != p.team;
         }else{
             for(int j = p.y+1; j < y;j++){
-                print("%d,%d\n",x,j);
+                
                 if(board[x][j].type != EMPTY){
                     return 0;
                 }
@@ -590,7 +606,7 @@ int validRookMov(struct piece p, int x, int y){
     }else if(p.y == y){
         if(p.x > x){
             for(int j = p.x-1; j > x;j--){
-                print("%d,%d\n",j,y);
+                
                 if(board[j][y].type != EMPTY){
                     return 0;
                 }
@@ -598,7 +614,7 @@ int validRookMov(struct piece p, int x, int y){
             return  board[x][y].type == EMPTY||board[x][y].team != p.team;
         }else{
             for(int j = p.x+1; j < x;j++){
-                print("%d,%d\n",j,y);
+                
                 if(board[j][y].type != EMPTY){
                     return 0;
                 }
@@ -614,7 +630,7 @@ int validBishopMov(struct piece p,int x,int y){
     if(p.x > x && p.y > y && p.x - x == p.y - y){
         int j = p.y-1;
         for(int i = p.x-1; i > x && j > y;i--){
-                print("board[i=%d][j=%d].type:%d\n",i,j,board[i][j].type);
+                
                 if(board[i][j].type != EMPTY){
                     return 0;
                 }
@@ -624,7 +640,7 @@ int validBishopMov(struct piece p,int x,int y){
     }else if(p.x < x && p.y > y  && x - p.x == p.y - y){
         int j = p.y-1;
         for(int i = p.x+1; i < x && j > y;i++){
-                print("board[i=%d][j=%d].type:%d\n",i,j,board[i][j].type);
+                
                 if(board[i][j].type != EMPTY){
                     return 0;
                 }
@@ -634,7 +650,7 @@ int validBishopMov(struct piece p,int x,int y){
     }else if(p.x < x && p.y < y  && x - p.x == y - p.y){
         int j = p.y+1;
         for(int i = p.x+1; i < x && j < y;i++){
-                print("board[i=%d][j=%d].type:%d\n",i,j,board[i][j].type);
+                
                 if(board[i][j].type != EMPTY){
                     return 0;
                 }
@@ -644,7 +660,7 @@ int validBishopMov(struct piece p,int x,int y){
     }else if(p.x > x && p.y < y  && p.x - x == y - p.y){
         int j = p.y+1;
         for(int i = p.x-1; i > x && j < y;i--){
-                print("board[i=%d][j=%d].type:%d\n",i,j,board[i][j].type);
+                
                 if(board[i][j].type != EMPTY){
                     return 0;
                 }

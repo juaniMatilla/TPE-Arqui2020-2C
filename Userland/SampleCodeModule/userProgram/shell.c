@@ -1,10 +1,12 @@
 #include "shell.h"
 void info();
 void printMem(char* c);
-void execute(char *command);
+int execute(char *command);
 int strcmp(char *str1,char *str2);
 int strToInt(char a[]);
-void StartShell(){
+int fromChess = 0;
+int StartShell(int chessFlag){
+  fromChess = chessFlag;
   //playchess();
   consoleSize(1016, 0, 768, 0);
   clearDisplay(0);
@@ -25,7 +27,8 @@ void StartShell(){
     }
     command[i] = 0;
     buff = 0;
-    execute(command);
+    if(execute(command))
+      return 0;
   }
     
 }
@@ -37,6 +40,9 @@ void info(){
     print(" excpetions: Permite ver mediante operaciones matematicas que las excepciones funcionan correctamente\n");
     print(" printMem (puntero): Dado un puntero imprime el valor de los 32 bytes siguientes\n");
     print(" help: Muestra los comandos disponibles\n");
+    if(fromChess){
+      print("resume: vuelve a el juego guardado\n");
+    }
 
 }
 
@@ -55,7 +61,7 @@ void inforeg(){
     //int *registers = getRegisters();
 }
 
-void execute(char *command){
+int execute(char *command){
   if(strcmp(command,"help") == 0){
     info();
   }else if(strcmp(command,"exceptions") == 0){
@@ -67,32 +73,34 @@ void execute(char *command){
   }else if(strcmp(command,"date") == 0){
      print("date\n");
     //date();
+  }else if(strcmp(command,"resume") == 0){
+    if(fromChess == 1)
+      return 1;
+    else
+      print("No hay juego guardado\n");
   }else if(strcmp(command,"chess") == 0){
     clearDisplay(0);
     playchess();
     clearDisplay(0);
     consoleSize(1024, 0, 768, 0);
-  }else{
+    clearDisplay(0);
+    print("Modulos:\n");
+    info();
+    print("¿Que modulo desea correr?\n");
+  }else {
     char *str = "printMem ";
     int i;
     for(i = 0;str[i];i++){
         if(command[i] != str[i]){
             print("Comando no existente\n");
-            return;
+            return 0;
         }
     }
     printMem(strToInt(command[i]));
   }
+  return 0;
 }
 
-int strcmp(char *str1,char *str2){
-    for(int i=0;str1[i]&&str2[i];i++){
-        if(str1[i] != str2[i]){
-            return 1;
-        }
-    }
-    return 0;
-}
 
 
   
