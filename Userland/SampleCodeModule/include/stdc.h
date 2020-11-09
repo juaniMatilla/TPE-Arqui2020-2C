@@ -20,4 +20,17 @@ void Matrix16x16(int x, int y, unsigned char* matriz, int fontSize, int fontColo
 int getchar(char* c);
 int scan(char * buffer, int len);
 
+//fecha y hora
+int getSeconds();
+int getMinutes();
+int getHours();
+int getDay();
+int getMonth();
+int getYear();
+void StringDataTime(char* buffer);//pasar un buffer de dim 17
+
+//registros
+void getRegistersValues();
+void getFromAdress(uint8_t* buffer, int cantBytes, uint64_t address);
+
 #endif

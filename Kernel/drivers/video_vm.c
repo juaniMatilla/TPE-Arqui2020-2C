@@ -137,20 +137,20 @@ void scrollUp(int cant, unsigned int backgroundColor){
 void drawFont16x16(int x, int y, unsigned char* matriz, int fontSize, int fontColor, int backgroundColor){
     int aux_x = x;
     int aux_y = y;
-    int aux = 0;
-    int aux_2 = 0;
+    int aux_i = 0;
+    int aux_j = 0;
     char bitIsPresent;
 
-    for (int i = 0; i < CHAR_HEIGHT; i++){
-        for (int  j = 0; j < 16; j++){
+    for (int i = 0; i < 16; i++){
+        for (int  j = 0; j < 17 ; j++){
             if(j > 8){
-                aux = 1;
-                aux_2 = 8;
+                aux_i= 1;
+                aux_j = 7;
             }else{
-                aux = 0;
-                aux_2 = 0;
+                aux_i = 0;
+                aux_j = 0;
             }
-            bitIsPresent = (1 << (8 - (j-aux_2))) & matriz[(i*2) +aux];  //toDraw[i]; //no se que hace buscar
+            bitIsPresent = (1 << (8 - (j-aux_j))) & matriz[(i*2)+aux_i];  
             
             if(bitIsPresent)
                 drawSquare(aux_x, aux_y, fontSize, fontColor);
@@ -195,8 +195,12 @@ void writeConsole(const char* String){
 
 void writeCharConsole(char character){
     if(character == '\n'){
-            newLineConsole();
-            return;
+        newLineConsole();
+        return;
+    }
+    if(character == '\b'){
+        backspace();
+        return;
     }
     if(currentX+(CHAR_WIDTH*defaultFontSize) > max_x){
         currentX = min_x;
@@ -207,6 +211,13 @@ void writeCharConsole(char character){
         }
     }
     currentX += drawChar(currentX, currentY, character, defaultFontSize, defaultFontColor, defaultBackgroundColor);
+}
+
+void backspace(){
+    if((currentX - CHAR_WIDTH*defaultFontSize) >= min_x){
+        currentX -= CHAR_WIDTH*defaultFontSize;
+    }
+    drawRectangle(currentX, currentY, CHAR_WIDTH*defaultFontSize, CHAR_HEIGHT*defaultFontSize, defaultBackgroundColor);
 }
 
 

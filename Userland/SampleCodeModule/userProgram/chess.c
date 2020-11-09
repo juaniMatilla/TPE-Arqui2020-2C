@@ -18,31 +18,20 @@
 #define LEFT 10
 #define RIGHT 20
 
-
-
 #define MAX_POS 8
-#define WHITE 15395564
 #define BLACK 0
+#define WHITE 15395564
+
 
 #define BACKGROUND_COLOR_1 9226804
 #define BACKGROUND_COLOR_2 16475904
 #define PIECE_SIZE 4
 #define PIECE_RESOLUTION 16
 
-
-
-//
 #define PLAYER1 1
 #define PLAYER2 2
 
 #define MAXPLAYS 99
-/*
-typedef struc{
-    int x;
-    int y;
-    int type;
-    int team;
-}piece;*/
 
 struct piece {
     int x;
@@ -80,7 +69,9 @@ int dangerPlace(int x,int y,int team);
 int winner = 0, time1 = 0, time2 = 0, indexLogs1=0,indexLogs2=0,rotation=0;
 
 int playchess(){
+    
     initBoard();
+
     consoleSize(1016, 600, 500, 10);
     updateView();
    
@@ -264,18 +255,22 @@ void updateView(){
                 }
             }else if(j%2 == 0){
                 backgroundColor = BACKGROUND_COLOR_2;
-            }else{
+            }else
                 backgroundColor = BACKGROUND_COLOR_1;
+            if(i == MAX_POS || j ==  MAX_POS){
+                backgroundColor = BLACK;    
             }
-            Matrix16x16(aux_x, aux_y, charBitmap(board[i][j].type), PIECE_SIZE, board[i][j].team, backgroundColor);            aux_x += PIECE_SIZE*PIECE_RESOLUTION;
+            Matrix16x16(aux_x, aux_y, charBitmap(board[i][j].type), PIECE_SIZE, board[i][j].team, backgroundColor);           
+            aux_x += PIECE_SIZE*(PIECE_RESOLUTION+1);
         }
         aux_x = 0;
-        aux_y += PIECE_SIZE*PIECE_RESOLUTION;
+        aux_y += PIECE_SIZE*(PIECE_RESOLUTION);
     }
 
 }
 
 void initBoard(){
+
     for (int i = 0; i < MAX_POS; i++)
         board[8][i] = (struct piece) {i,8,i+7,WHITE};  
     for (int i = 0; i < MAX_POS; i++)
@@ -317,6 +312,8 @@ void initBoard(){
     board[6][5] = (struct piece) {6,5,PAWN,BLACK};
     board[6][6] = (struct piece) {6,6,PAWN,BLACK};
     board[6][7] = (struct piece) {6,7,PAWN,BLACK};
+    board[8][8] = (struct piece) {8,8,23,WHITE};
+
 }
 
 int isValidMovement(int x, int y,struct piece p){

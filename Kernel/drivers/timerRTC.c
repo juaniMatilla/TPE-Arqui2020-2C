@@ -5,31 +5,54 @@ void strUnion(char* buff, char* str, int desde, int dim);
 void intToStr(int num, char* buff);
  
 int getSeconds() {
-  return getTimeInfo(0);
+	return getTimeInfo(0);
 }
 
 int getMinutes() {
-  return getTimeInfo(2);
+	return getTimeInfo(2);
 }
 
 int getHours() {
-  return getTimeInfo(4);
+	return getTimeInfo(4);
 }
 
 int getDay() {
-  return getTimeInfo(7);
+	return getTimeInfo(7);
 }
 
 int getMonth() {
-  return getTimeInfo(8);
+	return getTimeInfo(8);
 }
 
 int getYear() {
-  return getTimeInfo(9);
+	return getTimeInfo(9);
 }
 
+void getDataTime(int mode, int* result){
+	switch(mode) {
+    case 0: 
+		*result = getSeconds();
+    	break;
+    case 1: 
+		*result = getMinutes();
+    	break;
+    case 2: 
+		*result = getHours();
+    	break;
+    case 3: 
+		*result = getDay();
+    	break;
+    case 4: 
+		*result = getMonth();
+    	break;
+    case 5: 
+		*result = getYear();
+    	break;
+  }
+}
+/*
 //cambiar que reciba un buff, que no use una variable local
-char* getDataTime() {
+void StringDataTime(char *buffer) {
 	int seconds = getSeconds();
 	int minutes = getMinutes();
 	int hours = getHours()-3;
@@ -38,50 +61,39 @@ char* getDataTime() {
 	int month = getMonth();
 	int year = getYear();
     
-    char result[20] ;
 	char aux[2];
 	
     intToStr(day, aux);
-    strUnion(result, aux, 0, 2);
+    strUnion(buffer, aux, 0, 2);
 
-	result[2] = '/';
+	buffer[2] = '/';
 
 	intToStr(month, aux);
-	strUnion(result, aux, 3, 2);
+	strUnion(buffer, aux, 3, 2);
 
-	result[5] = '/';
+	buffer[5] = '/';
 
 	intToStr(year, aux);
-	strUnion(result, aux, 6, 2);
+	strUnion(buffer, aux, 6, 2);
 
-	result[8] = ' ';
+	buffer[8] = ' ';
 
 	intToStr(hours, aux);
-	strUnion(result, aux, 9, 2);
+	strUnion(buffer, aux, 9, 2);
 
-	result[11] = ':';
+	buffer[11] = ':';
 
 	intToStr(minutes, aux);
-	strUnion(result, aux, 12, 2);
+	strUnion(buffer, aux, 12, 2);
 
-	result[14] = ':';
+	buffer[14] = ':';
 
 	intToStr(seconds, aux);
-	strUnion(result, aux, 15, 2);
+	strUnion(buffer, aux, 15, 2);
 
-    result[17] = '\n';
+    buffer[17] = '\n';
 
-	return result;
 }
-/*
-int getTime() {
-	int result = getSeconds();
-	int minutes = getMinutes();
-	int hours = getHours()-3;
-	int result ;
-
-	return result ;
-}*/
 
 //copia todo el vector str en buff desde la posicion 'desde' inclusive  
 //dim: dimencion de str
@@ -101,3 +113,4 @@ void intToStr(int num, char* buff){
     }
     return;   
 }
+*/

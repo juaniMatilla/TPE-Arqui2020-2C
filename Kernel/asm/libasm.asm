@@ -1,9 +1,7 @@
 
 	GLOBAL cpuVendor
 	GLOBAL getTimeInfo
-	
-	GLOBAL _readKey
-	GLOBAL kbFlag
+	GLOBAL getMemoryValue
 	GLOBAL getKeyScanCode
 
 	GLOBAL _sti 
@@ -22,11 +20,12 @@
 	GLOBAL _irq05Handler  ;USB
 	;las interupciones de software
 	GLOBAL _irq80Handler
-	GLOBAL _hlt
+	GLOBAL _irq81Handler:
 	
 	extern  irqDispatcher
 	extern  exDispatcher
 	extern  int80Handler ;las interupciones de software
+	extern	int81Handler  
 section .text
 
 %macro pushState 0
@@ -65,11 +64,6 @@ section .text
 	pop rax ;
 %endmacro
 
-_hlt:
-	sti
-	hlt
-	ret
-
 ;recibe un 1byte donde cada uno de sus 8 bit representa una entrada del pic
 ;si la entrada esta en 1 se ignora al dispositivo
 picMasterMask:   
@@ -87,14 +81,12 @@ picSlaveMask:
     out 0A1h,al
     pop rbp
     retn
-
-
 _sti:
 	sti
 	ret
 
 
-_cli:   ;
+_cli:   
 	cli
 	ret
 	
@@ -189,22 +181,40 @@ getKeyScanCode:
 	pop rbp
 	ret
 
+getMemoryValue:	
+	push rbp
+	mov rbp,rsp
+	
+	mov rax, 0
+	mov al, [rdi]
+
+	mov rsp,rbp
+	pop rbp
+	ret
 
 ;System call
 _irq80Handler:
 	pushState
+
 	mov rdi, rax 
 	mov rsi, rsp
-	;add rsi, 14*8 ;que apunte al primer argumento
 	call int80Handler
 	
 	popState
 	iretq
 
+_irq81Handler:
+	mov rsi,rsp     ; direccion en la que ocurrio la excepcion
+	pushState
+
+	mov rdi, rsp  	; direccion del stack pointer para obtener los registros
+	call int81Handler
+
+	popState
+	iretq
 
 ; IRQ Interruptions
 %macro irqHandlerMaster 1
-	
 	pushState
 
 	mov rdi, %1 ; pasaje de parametro
@@ -220,18 +230,6 @@ _irq80Handler:
 
 _irq00Handler:
 	irqHandlerMaster 0
-	;pushState
-	;mov rdi, 0
-	;call irqDispatcher ; ejecutamos la rutina de interrupcion del tick original
-	;mov rdi, rsp 
-	;call scheduler_shortTerm
-	;mov  rsp, rax 
-	  ;singal pic EOI (enf of Interupt)
-	;mov al, 20h 
-	;out 20h, al 
-
-	;popState
-	;iretq
 
 ;Keyboard
 _irq01Handler:
@@ -244,26 +242,20 @@ _irq08Handler:
 
 ; Exceptions
 %macro exHandlerMaster 1
+	mov rsi,rsp     ; direccion en la que ocurrio la excepcion
 	pushState
 
-	mov rsi, rsp 
-	add rsi, 15*8 ;rsi apunta a la direccion de retorno a la funcion que fallo
-	mov rdx, rsp 
-	add rdx, 15*8 
-	add rdx, 3*8 ;rdx apunta a la direccion de stack de la funcion que fallo
-
-	mov rdi, %1 ;pasaje de parametros
-	call exDispatcher ;es una funcion de c ya programada 
+	mov rdi, %1 	; pasaje de parametro
+	mov rdx, rsp   	; direccion del stack pointer para obtener los registros
+	call exDispatcher 
 
 	popState
 	iretq
 %endmacro
 
-
 ;DivByZero
 _ex00Handler:
 	exHandlerMaster 0
-
 ;invalid opcode
 _ex01Handler:
 	exHandlerMaster 1
