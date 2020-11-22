@@ -45,8 +45,8 @@ void info(){
     print(" inforeg: Muestra el valor de los registros\n");
     print(" date: Muestra el la hora y fecha actual\n");
     print(" chess: Abre un juego de ajedrez\n");
-    print(" excpetions0: excepción de divivion por cero \n");
-    print(" excpetions1: excepción de código de operación inválido \n");
+    print(" exception0: excepción de divivion por cero \n");
+    print(" exception6: excepción de código de operación inválido \n");
     print(" printMem (puntero): Dado un puntero imprime el valor de los 32 bytes siguientes\n");
     print(" help: Muestra los comandos disponibles\n");
     if(fromChess){

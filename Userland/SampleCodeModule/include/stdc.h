@@ -12,6 +12,7 @@ void clearDisplay(unsigned int backgroundColor);
 void print(const char *format, ...);
 void putStirng(char *String); //imprime un string
 void putchar(char c); //imprime un caeacter
+void putHex(int num);
 void putInt(int num);
 void putHex(int num);
 
