@@ -104,6 +104,9 @@ void int80Handler(uint64_t num, uint64_t *RSP) {
         case 12:
              drawString(RSP[9], RSP[8] , RSP[11]);
             break;
+        case 13:
+             delay(RSP[9]);
+            break;
     
     }       
 	return;

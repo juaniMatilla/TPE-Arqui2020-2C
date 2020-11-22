@@ -211,6 +211,10 @@ int getYear() {
     return result;
 }
 
+void delay(int timer) {
+    SystemCall13();
+}
+
 //pasar un buffer de dim 17
 void StringDataTime(char* buffer) {
 	int seconds = getSeconds();

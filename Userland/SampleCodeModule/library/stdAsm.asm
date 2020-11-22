@@ -13,6 +13,7 @@
     GLOBAL SystemCall10
     GLOBAL SystemCall11
     GLOBAL SystemCall12
+    GLOBAL SystemCall13
 
 section .text
 
@@ -48,6 +49,8 @@ SystemCall11:       ;getTicks
 SystemCall12:       ;drawString
     SystemCall 12
 
+SystemCall13:       ;delay
+    SystemCall 13
 
 
 
