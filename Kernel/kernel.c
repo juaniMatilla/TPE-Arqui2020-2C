@@ -1,20 +1,7 @@
-#include <stdint.h>
-#include <string.h>
-#include <lib.h>
-#include <moduleLoader.h>
-#include <naiveConsole.h>
+#include <Kernel.h>
 
-#include <text_driver.h>
-#include <timerRTC.h>
-#include "video_vm.h"
-#include "idt.h"
-
-extern uint8_t text;
-extern uint8_t rodata;
-extern uint8_t data;
-extern uint8_t bss;
-extern uint8_t endOfKernelBinary;
-extern uint8_t endOfKernel;
+uint64_t * _b_rsp;
+uint64_t * _b_rip;
 
 static const uint64_t PageSize = 0x1000;
 
@@ -84,9 +71,13 @@ void * initializeKernelBinary(){
 int main(){	
 
 	load_idt();
+
+	_b_rip = sampleCodeModuleAddress;
+	//_b_rsp = (uint64_t *)(_rsp() - (sizeof(uint64_t) << 1));
+	_b_rsp = _rsp();
+
 	init_VM_Driver();
-	//clearDisplay(0);
-	
+
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -95,15 +86,12 @@ int main(){
 	ncPrint("  Calling the sample code module returned: ");
 	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
 	ncNewline();
-	ncNewline();
-
 	ncPrint("  Sample data module at 0x");
 	ncPrintHex((uint64_t)sampleDataModuleAddress);
 	ncNewline();
 	ncPrint("  Sample data module contents: ");
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
-
 	ncPrint("[Finished]");
 	
 	return 0;

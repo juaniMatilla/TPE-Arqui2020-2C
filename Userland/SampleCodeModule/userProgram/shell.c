@@ -3,14 +3,13 @@
 extern void invalid_opcode();
 
 void info();
-void printMem(char* c);
+void printMem(int c);
 int execute(char *command);
-int strcmp(char *str1,char *str2);
-int strToInt(char a[]);
 int fromChess = 0;
+
 int StartShell(int chessFlag){
   fromChess = chessFlag;
-  consoleSize(1016, 0, 768, 0);
+  consoleSize(1016, 0, 760, 0);
   clearDisplay(0);
 
   print("Modulos:\n");
@@ -56,16 +55,15 @@ void info(){
 
 }
 
-void printMem(int c){
-    uint8_t buffer[32];
-    getFromAdress(buffer[0], 32, c);
-    for (int i = 0; i < 32; i++){
-      char aux[2];
-      hexToStr(buffer[0], aux[0]);
-      putStirng(aux[0]);
-    }
-    
-}
+//void printMem(int c){
+//    uint64_t buffer[32];
+//    getFromAdress(buffer[0], 32, c);
+//    for (int i = 0; i < 32; i++){
+//      char aux[2];
+//      hexToStr(buffer[0], aux[0]);
+//      putStirng(aux[0]);
+//    }    
+//}
 
 int execute(char *command){
   if(strcmp(command,"help") == 0){
@@ -87,23 +85,25 @@ int execute(char *command){
      char buff[17];
      StringDataTime(buff[0]);
      putStirng(buff[0]);
-  }else if(strcmp(command,"printMen") == 0){
+    }else if(strcmp(command,"printMen") == 0){
     print("ingrese la direcion:\n");
-    char aux[20];
+    char address[20] = {0};
+    char buff;
     int i = 0;
-    while(aux != '\n'){
-         if(getchar(&aux) == 1){
-            if(aux == '\b'){
-              putchar(aux);
+    while(buff != '\n'){
+         if(getchar(&buff) == 1){
+            if(buff == '\b'){
+              putchar(buff);
               if(i>0)
                 i--;
             }else{
-              putchar(aux);
-              aux[i++] = aux;  
+              putchar(buff);
+              address[i++] = buff;  
             }
           }
     }
-    printMem(strToInt(aux[i]));
+    getFromAddress(address);
+    
   }else if(strcmp(command,"resume") == 0){
     if(fromChess == 1)
       return 1;

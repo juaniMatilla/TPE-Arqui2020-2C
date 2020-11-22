@@ -17,7 +17,6 @@ void load_idt() {
     setup_IDT_entry (0x21, (uint64_t) &_irq01Handler); //keyboard
     
     setup_IDT_entry (0x80, (uint64_t) &_irq80Handler); 
-    setup_IDT_entry (0x81, (uint64_t) &_irq81Handler);
 
 	//timer tick y teclado habilitadas
     picMasterMask(0xFC); 
@@ -26,7 +25,7 @@ void load_idt() {
 	_sti();
 }
 
-void exDispatcher(uint64_t num, uint64_t *RIP, uint64_t *RSP){
+void exDispatcher(uint64_t num, uint64_t *TOP){
     switch(num){
 		case 0: 
 				writeConsole("ZERO EXCEPTION \n" );
@@ -35,20 +34,25 @@ void exDispatcher(uint64_t num, uint64_t *RIP, uint64_t *RSP){
 				writeConsole("INVALID OPERATION CODE \n");
 		    break;
 	}
-	printRegister( saveRegisters(RSP, RIP) );
-    
-    for (int i = 0; i < 1000000000; i++); //delay para que se vea el mensaje
-    
-    RIP[0] = 0x400000;
+    //uint64_t *_old_rip = TOP[15];
+    //uint64_t *_old_rsp = TOP;
+	printRegister(saveRegisters(TOP));
+    delay(100);
+    TOP[18] = (uint64_t)_b_rsp;
+    TOP[15] = (uint64_t)_b_rip;
+    return;
 }
 
-void irqDispatcher(uint64_t irq) {
-	switch (irq) {
-		case 0: 
-            //testerTick();
+void irqDispatcher(uint64_t irq, uint64_t *TOP){
+	//uint64_t *_old_rip = RIP;
+    //uint64_t *_old_rsp = RSP;
+
+    switch (irq) {
+		case 0: //timer tick
+            timerTickConuter();
 			break;
         case 1: // Keyboard
-            keyboard_handler();
+            keyboard_handler(TOP);
             break;
         case 8: //RTC int
             //purebaRTC();
@@ -88,16 +92,23 @@ void int80Handler(uint64_t num, uint64_t *RSP) {
         case 8:
             getDataTime(RSP[9], RSP[8]);
             break;
-        case 10:
-            getFromAdress(RSP[9], RSP[8]);
+        case 9:
+            RSP[14] = getRegisters();
             break;
-	}
+        case 10:
+            getFromAdress(RSP[9], RSP[8],1);
+            break;
+        case 11:
+             RSP[14] = getTicks();
+            break;
+        case 12:
+             drawString(RSP[9], RSP[8] , RSP[11]);
+            break;
+    
+    }       
 	return;
 }
 
-uint64_t* int81Handler(uint64_t *RIP, uint64_t *RSP){
-    return saveRegisters(RSP, RIP);
-}
 
 static void setup_IDT_entry (int index, uint64_t offset) {
     idt[index].offset_l = offset & 0xFFFF;  

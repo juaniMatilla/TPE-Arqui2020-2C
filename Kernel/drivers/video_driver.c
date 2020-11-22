@@ -136,6 +136,14 @@ void scrollUp(int cant, unsigned int backgroundColor){
     currentY -= (CHAR_HEIGHT*defaultFontSize);
 }
 
+void drawString(int x, int y, char *String){
+    int aux_x = x;
+    for (int i = 0; String[i] != 0 ; i++)	{
+       aux_x += drawChar(aux_x, y, String[i], defaultFontSize, defaultFontColor, defaultBackgroundColor);  
+    }
+}
+
+
 //escribe caracteres de resolucion de 16X16 bit
 void drawFont16x16(int x, int y, unsigned char* matriz, int fontSize, int fontColor, int backgroundColor){
     int aux_x = x;

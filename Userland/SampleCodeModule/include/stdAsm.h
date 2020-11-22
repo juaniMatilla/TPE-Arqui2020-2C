@@ -23,6 +23,10 @@ void SystemCall08(char mode,int* dim); //devulve los datos de la feha o hora sel
 
 uint64_t* SystemCall09(); //devulve una estructura con los registros
 
-void SystemCall10(uint8_t *buffer, uint64_t address); //devuelve 1byte de la dirrecion de memoria
+void SystemCall10(uint64_t address, uint64_t * target); //devuelve 1byte de la dirrecion de memoria
 
+uint64_t SystemCall11(); //devuleve la cantidad de cilcos de 50ms del timer tick desde que se inicio el programa
+
+void SystemCall12(int x, int y, char *String); //escribe un string en panta en la ubicacion deciada, 
+                                               // tambaño, color y fondo por default
 #endif 

@@ -84,6 +84,28 @@ void hexToStr(int num, char *buff){
     return;
 }
 
+int atohex(char * str) {
+  int aux = 0;
+  while (*str != 0) {
+    int value = 0;
+    if (*str >= '0' && *str <= '9') {
+      value = *str - '0';
+    } else if (*str >= 'A' && *str <= 'F') {
+      value = 10 + *str - 'A';
+    } else if (*str >= 'a' && *str <= 'f') {
+      value = 10 + *str - 'a';
+    } else {
+      //return -1;
+      str++;
+      continue;
+    }
+    str++;
+    aux *= 16;
+    aux += value;
+  }
+  return aux;
+}
+
 void numTwoDigitsToStr(int num, char* buff){
     for (int i = 1; i >= 0; i--){
         int aux = num%10;
@@ -149,6 +171,10 @@ int scan(char * buffer, int len){
     return 0;
 }
 //hora y fecha////////////////////////////////////////////////////////////////////
+uint64_t getMillis(){
+    return (SystemCall11()*50);
+}
+
 int getSeconds() {
 	int result = 0;
     SystemCall08(0,&result);
@@ -160,15 +186,6 @@ int getMinutes() {
     SystemCall08(1,&result);
     return result;
 }
-int strcmp(char *str1,char *str2){
-    for(int i=0;str1[i]&&str2[i];i++){
-        if(str1[i] != str2[i]){
-            return 1;
-        }
-    }
-    return 0;
-}
-
 
 int getHours() {
 	int result = 0;
@@ -237,23 +254,38 @@ void StringDataTime(char* buffer) {
 //registros y memoria /////////////////////////////////////////////
 void getRegistersValues(){
     char* RegistersName[] = {"R15","R14","R13","R12","R11","R10","R9","R8",
-    "RSI","RDI","RBP","RDX","RCX","RBX","RAX","RIP"};
+    "RSI","RDI","RBP","RDX","RCX","RBX","RAX","RIP", "CS", "FLAGS","RSP"};
     uint64_t* Registers = SystemCall09();
     
     putStirng("registros: \n");
-    for (int i = 0; i < 16; i++){
+    for (int i = 0; i < 19; i++){
         print("%s = %x,  ",RegistersName[i] , Registers[i]);    
     }
 }
 
-void getFromAdress(uint8_t* buffer, int cantBytes, uint64_t address){
-    uint64_t* aux = (uint64_t*) address;
-    for (int i = 0; i < cantBytes; i++){
-        SystemCall10(buffer[i], aux[i]);
-    }
+void getFromAddress(char* address){
+    int with0x = 0;
+    uint64_t aux = atohex(address);
+    if(aux >= 0){
+        for (int i = 0; i < 32; i++, aux++){
+            uint64_t date = 1;
+            
+            SystemCall10(aux, &date);
+            //if(date == 0)
+            //    print("-0x%x: 0\n", aux);
+            //else 
+            print("-0x%x: %x\n",aux, date);
+        } 
+    }else
+        print("INVALID ADDRESS\n");
+    
 }
 
 //manejo de consola///////////////////////////////////////////////////////////////////
+void String(int x, int y, char *String){
+    SystemCall12(x, y, String);
+}
+
 void consoleSize(int maxX, int minX, int maxY, int minY){
     SystemCall02(maxX, minX, maxY, minY);
 }

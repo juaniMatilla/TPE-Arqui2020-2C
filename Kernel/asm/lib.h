@@ -11,10 +11,14 @@ int getTimeInfo(int num);
 
 void _sti();
 void _cli();
+void _hlt();
+
 void _picMasterMask(uint8_t mask);
 void _picSlaveMask(uint8_t mask);
 uint8_t getKeyScanCode();
+
 uint64_t getMemoryValue(uint64_t address);
+void saveInitialRSP();  //guarda la la direcion inical del stack
 
 void _ex00Handler(); //DivByZero
 void _ex01Handler(); // 

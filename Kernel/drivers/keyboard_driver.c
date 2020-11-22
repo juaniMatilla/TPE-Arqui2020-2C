@@ -1,17 +1,4 @@
-#include <stdint.h>
-#include <lib.h>
 #include <keyboard_driver.h>
-
-//scancodes de teclas especiales
-#define CONTROL_PRESSED 29
-#define CONTROL_RELEASED 157
-#define LEFT_SHIFT_PRESSED 42
-#define LEFT_SHIFT_RELEASED 170
-#define RIGHT_SHIFT_PRESSED 54
-#define RIGHT_SHIFT_RELEASED 182
-#define BLOQMAYUS 58
-
-#define INPUT_BUFFER 255 //Cant max de caracteres en buffer de input
 
 static char keyboardBuffer[INPUT_BUFFER];
 static unsigned int bufferSize = 0;
@@ -54,7 +41,7 @@ void readStandardInput(char * buffer,int dim) {
   
 }
 
-void keyboard_handler(){
+void keyboard_handler(uint64_t *TOP){
     int code = getKeyScanCode();
     if(code==CONTROL_PRESSED)
       pressingCtrl=1;
@@ -66,6 +53,8 @@ void keyboard_handler(){
       pressingShift=0;
     else if(code==BLOQMAYUS)
       bloqMayus = !bloqMayus;
+    else if(code == F1)
+      saveRegisters(TOP); //cambiar
     else if (code < 58) { //Si es una tecla presionada
     int auxMayus = (bloqMayus | pressingShift);
     keyboardBuffer[(bufferIndex++)%INPUT_BUFFER] = asccode[code][auxMayus];

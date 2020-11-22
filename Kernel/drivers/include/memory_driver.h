@@ -7,8 +7,11 @@
 
 
 
-void getFromAdress(uint8_t *buffer, uint64_t address);
-void printRegister(uint64_t* aux);
+void getFromAdress(uint64_t address, uint64_t * target, uint8_t totalBytes);
+
+void printRegister(uint64_t* aux);  //imprime los regitros
+uint64_t* getRegisters();
+uint64_t* saveRegisters(uint64_t *TOP);
 
 
 #endif

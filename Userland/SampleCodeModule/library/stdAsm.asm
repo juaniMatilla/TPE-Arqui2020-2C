@@ -11,6 +11,8 @@
     GLOBAL SystemCall08
     GLOBAL SystemCall09
     GLOBAL SystemCall10
+    GLOBAL SystemCall11
+    GLOBAL SystemCall12
 
 section .text
 
@@ -38,10 +40,13 @@ SystemCall07:       ;backspace
 SystemCall08:       ;fecha y hora
     SystemCall 8
 SystemCall09:       ;guarda los registros
-    int 81h
-    ret
+    SystemCall 9
 SystemCall10:       ;getFromAdress
     SystemCall 10
+SystemCall11:       ;getTicks
+    SystemCall 11
+SystemCall12:       ;drawString
+    SystemCall 12
 
 
 

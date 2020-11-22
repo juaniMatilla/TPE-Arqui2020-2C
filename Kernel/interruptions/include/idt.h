@@ -6,10 +6,12 @@
 #include <lib.h>
 #include <stdarg.h> //permite arumentos variables
 
-#include <video_vm.h>
+#include <video_driver.h>
 #include <keyboard_driver.h>
 #include <timerRTC.h>
 #include <memory_driver.h>
+#include <timerTick.h>
+#include <kernel.h>
 
 /* Descriptor de interrupcion */
 typedef struct {
@@ -23,9 +25,8 @@ typedef struct {
 } DESCR_INT;
 
 void load_idt();
-void irqDispatcher(uint64_t irq);
-void exDispatcher(uint64_t num, uint64_t *RIP, uint64_t *RSP);
+void irqDispatcher(uint64_t irq, uint64_t *TOP);
+void exDispatcher(uint64_t irq, uint64_t *TOP);
 void int80Handler(uint64_t num, uint64_t *RIP);
-uint64_t* int81Handler(uint64_t *RIP, uint64_t *RSP);
 
 #endif

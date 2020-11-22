@@ -3,9 +3,12 @@
 	GLOBAL getTimeInfo
 	GLOBAL getMemoryValue
 	GLOBAL getKeyScanCode
+	GLOBAL saveInitialRSP
 
 	GLOBAL _sti 
 	GLOBAL _cli
+	GLOBAL _hlt
+	GLOBAL _rsp
 	GLOBAL picMasterMask
 	GLOBAL picSlaveMask
 
@@ -16,8 +19,7 @@
 	GLOBAL _irq00Handler  ;timer tick
 	GLOBAL _irq01Handler  ;keyboard
 	GLOBAL _irq08Handler  ;RTC
-	GLOBAL _irq04Handler  ;Serial Port 1 and 3
-	GLOBAL _irq05Handler  ;USB
+
 	;las interupciones de software
 	GLOBAL _irq80Handler
 	GLOBAL _irq81Handler:
@@ -25,7 +27,7 @@
 	extern  irqDispatcher
 	extern  exDispatcher
 	extern  int80Handler ;las interupciones de software
-	extern	int81Handler  
+	
 section .text
 
 %macro pushState 0
@@ -78,38 +80,38 @@ picSlaveMask:
 	push rbp
     mov  rbp, rsp
     mov  ax, di  ; ax = mascara de 16 bits
-    out 0A1h,al
+    out  0A1h,al
     pop rbp
     retn
 _sti:
 	sti
 	ret
 
-
 _cli:   
 	cli
+	ret
+
+_hlt:
+	sti
+	hlt
+	ret
+
+_rsp:
+	mov rax, rsp
 	ret
 	
 cpuVendor:
 	push rbp
 	mov rbp, rsp
-
 	push rbx
-
 	mov rax, 0
 	cpuid
-
-
 	mov [rdi], ebx
 	mov [rdi + 4], edx
 	mov [rdi + 8], ecx
-
 	mov byte [rdi+13], 0
-
 	mov rax, rdi
-
 	pop rbx
-
 	mov rsp, rbp
 	pop rbp
 	ret
@@ -141,32 +143,6 @@ getTimeInfo:
   pop rbp
   ret
 
-_readKey:
-	in al,64h
-	test al,1
-	jz .nothing
-	mov rax, 0
-	in al, 60h
-	jmp .end
-.nothing: 
-	mov rax, 0
-.end:
-	retn
-
-kbFlag:
-    push rbp
-    mov rbp, rsp
-    mov rax,0
-.loop:
-    in al,0x64       
-    and al,0x01       
-    cmp al,0
-    je .loop
-    in al,0x60
-       
-    mov rsp, rbp
-    pop rbp
-    ret
 getKeyScanCode:
 	push rbp
 	mov rbp,rsp
@@ -186,11 +162,12 @@ getMemoryValue:
 	mov rbp,rsp
 	
 	mov rax, 0
-	mov al, [rdi]
+	mov al,byte[rdi]
 
 	mov rsp,rbp
 	pop rbp
 	ret
+
 
 ;System call
 _irq80Handler:
@@ -203,21 +180,16 @@ _irq80Handler:
 	popState
 	iretq
 
-_irq81Handler:
-	mov rsi,rsp     ; direccion en la que ocurrio la excepcion
-	pushState
-
-	mov rdi, rsp  	; direccion del stack pointer para obtener los registros
-	call int81Handler
-
-	popState
-	iretq
-
 ; IRQ Interruptions
 %macro irqHandlerMaster 1
+	
+	;mov rsi, rsp 	;direcion donde ocurrio la expcion
 	pushState
 
-	mov rdi, %1 ; pasaje de parametro
+	mov rdi, %1 	; pasaje de parametro
+	mov rsi, rsp   	; direccion del stack pointer para obtener los registros
+	;mov rcx, rsp 
+	;add rcx, 18*8 	;apunta a la direcion de rsp
 	call irqDispatcher
 
 	; signal pic EOI (End of Interrupt)
@@ -226,6 +198,7 @@ _irq81Handler:
 
 	popState
 	iretq
+	
 %endmacro
 
 _irq00Handler:
@@ -242,11 +215,13 @@ _irq08Handler:
 
 ; Exceptions
 %macro exHandlerMaster 1
-	mov rsi,rsp     ; direccion en la que ocurrio la excepcion
+	;mov rsi, rsp 	;direcion donde ocurrio la expcion
 	pushState
 
 	mov rdi, %1 	; pasaje de parametro
-	mov rdx, rsp   	; direccion del stack pointer para obtener los registros
+	mov rsi, rsp   	; direccion del stack pointer para obtener los registros
+	;mov rcx, rsp 
+	;add rcx, 18*8 	;apunta a la direcion de rsp
 	call exDispatcher 
 
 	popState
@@ -259,5 +234,3 @@ _ex00Handler:
 ;invalid opcode
 _ex01Handler:
 	exHandlerMaster 1
-
-
