@@ -43,6 +43,8 @@ struct log{
     struct piece p;
     int toX;
     int toY;
+    int fromX;
+    int fromY;
 };
 
 struct piece board[MAX_POS+1][MAX_POS+1];
@@ -66,9 +68,10 @@ int noMoveKing(int team);
 int noMoveRook(struct piece p, int side);
 int noPiecesBetween(int side,int team);
 int dangerPlace(int x,int y,int team);
+void matchPieceString(char *str,int piece);
 int getTime();
 int winner = 0, time1 = 0, time2 = 0, indexLogs1=0,indexLogs2=0,rotation=0;
-
+char *strPieces[6] = {"Rey","Reina","Caballo","Torre","Alfil","Peon"};
 int playchess(){
     
     initBoard();
@@ -77,10 +80,11 @@ int playchess(){
    
 
     int turn = PLAYER1;
-    print("Ingrese jugada con el formato\n: letraNum->letraNum (ej: 'B1->C1')\n");
+    print("Ingrese jugada con el formato\n: letraNum letraNum (ej: 'b1 c1')\n");
     print("Oprima 'r' para girar el tablero\n");
     print("Oprima '.' para pausar el juego\n");
     print("Escriba 'quit' y aprete enter en la consola para terminar el juego\n");
+    print("Escriba 'logs' y aprete enter para ver las jugadas hechas\n");
     print("Empieza el equipo blanco\n");
     char buff;
     while(!isWinner()){
@@ -89,7 +93,22 @@ int playchess(){
         int day = getDay();
         int time = getTime();
         print("$ ");
+        int aux = 0;
        while(buff != '\n'){
+           
+            if(turn == PLAYER1){
+                aux = getTime()- time + time1;
+                char *str = "Tiempo blancas: ";
+                char strNum[3];
+                intToStr(aux,strNum);
+                str[16] = strNum;
+                str[17] = strNum+1;
+                str[18] = strNum+2;
+                str[19] = 0;
+            }else{ 
+                aux =  getTime()- time + time2;
+                print("Tiempo negras:  %d\n",aux);
+            }
             if(getchar(&buff) == 1){
                 if(buff == 'r'){
                     if(rotation == 1){
@@ -138,7 +157,32 @@ int playchess(){
         if(strcmp(playString,"quit") == 0){
             return 0;
         }
-        char fromX = playString[0] -'A',fromY = playString[1]-'1',toX = playString[4]-'A' ,toY = playString[5]-'1' ;
+        if(strcmp(playString,"logs") == 0){
+            print("Logs blancas:\n");
+            for (int i = 0; i < indexLogs1; i++){
+                print("%d): %s desde ",i+1, strPieces[logs1[i].p.type-1]);
+                putchar(logs1[i].fromX+'a');
+                print("%d hacia ",logs1[i].fromY+1);
+                putchar(logs1[i].toX+'a');
+                print("%d\n",logs1[i].toY+1);
+            }
+            print("Logs negras:\n");
+            for (int i = 0; i < indexLogs2; i++){
+                print("%d):%s desde ",i+1, strPieces[logs2[i].p.type-1]);
+                putchar(logs2[i].fromX+'a');
+                print("%d hacia ",logs2[i].fromY+1);
+                putchar(logs2[i].toX+'a');
+                print("%d\n",logs2[i].toY+1);
+            }
+            continue;
+        }
+        if(strcmp(playString,"table") == 0){
+            updateView();
+            continue;
+        }
+       
+
+        char fromX = playString[0] -'a',fromY = playString[1]-'1',toX = playString[3]-'a' ,toY = playString[4]-'1' ;
         if(fromX < 0 || fromX >7||fromY < 0 || fromY >7||toX <0 || toX >7||toY < 0 || toY >7){
             print("Mal formato\n");
         }else if(turn == PLAYER1 && board[fromX][fromY].team == BLACK){
@@ -148,11 +192,17 @@ int playchess(){
         }else{
 
             if(isValidMovement(toX,toY,board[fromX][fromY])){
+                if(playString[5] == '+' && playString[6] == '+'){
+                    print("Jaque mate\n");
+                }
+                if(playString[5] == '+' && playString[6] != '+'){
+                    print("Jaque\n");
+                }
                 if(turn == PLAYER1){
-                    logs1[indexLogs1++] = (struct log){board[fromX][fromY], toX,toY};
+                    logs1[indexLogs1++] = (struct log){board[fromX][fromY], toX,toY,fromX,fromY};
                 }
                 if(turn == PLAYER2){
-                    logs2[indexLogs2++] = (struct log){board[fromX][fromY], toX,toY};
+                    logs2[indexLogs2++] = (struct log){board[fromX][fromY], toX,toY,fromX,fromY};
                 }
                 makeMov(fromX,fromY,toX,toY);
 
@@ -669,4 +719,31 @@ int validBishopMov(struct piece p,int x,int y){
         return  board[x][y].type == EMPTY ||(board[x][y].team != p.team);
     }
     return  0;    
+}
+
+void matchPieceString(char str[10],int piece){
+    switch (piece)
+    {
+    case PAWN:
+        *str = "Peon";
+        break;
+    case KING:
+        *str = "Rey";
+        break;
+    case QUEEN:
+        *str = "Reina";
+        break;
+    case KNIGHT:
+        *str = "Caballo";
+        break;
+    case ROOK:
+        *str = "Torre";
+        break;
+    case BISHOP:
+        *str = "Alfil";
+        break;
+    
+    default:
+        break;
+    }
 }
